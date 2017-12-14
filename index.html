@@ -1,0 +1,2763 @@
+<!DOCTYPE html>
+<!-- http://materializecss.com/icons.html -->
+<html>
+	<head>
+		<title>Pasteur EAV</title>
+		<link rel="stylesheet" href="materialize/css/materialize.min.css">
+		<link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.css">
+		<link rel="stylesheet" href="CSS/estilos.css">
+		<link rel="stylesheet" href="CSS/teclado.css">
+		<link rel="stylesheet" href="CSS/testTbube.css">
+		<link rel="stylesheet" href="CSS/login.css">
+		<link rel="stylesheet" href="CSS/fuenteLogin.css">
+		<link rel="stylesheet" href="CSS/Roboto.css">
+		<link rel="stylesheet" href="Scripts/DataTables/datatables.min.css">
+		<link rel="icon" href="imagenes/eav.ico" type="image/x-icon" />
+		
+		<meta charset="utf-8">
+	</head>
+	<body>
+	
+		<header>
+			<div id="barraDeEstatus">
+				<span id="claveUnidad">Indef</span>
+				<i class="material-icons dp48" id="ConSenalIcono" style="font-size:inherit">cloud_queue</i>
+				<i class="material-icons dp48" id="SinSenalIcono" style="display:none;font-size:inherit">cloud_off</i>
+				<i class="material-icons dp48" id="actualizandoIcono" style="font-size:inherit;display:none">refresh</i>
+				<img src="imagenes/lisIco.svg" id ="lisIco" >
+			</div>
+			<div class="page-header nav-wrapper" style="margin-top: 15px;">
+				<h1 id="titulo" style="font-family:Roboto;display:inline-block;"><b>Pasteur</b> <span style="font-weight: 200;">EAV</span></h1>
+				<input type="text" id="txtBusquedaSimple" onkeyup="filtrarTabla()" style="display:none">
+				<i class="material-icons" id="btnCerrarBusquedaSimple" style="font-style: normal;display:none;">close</i>
+				
+				<!-- botones -->				
+				<div id="btnConfiguracion" class="scale-out" style="display:none">
+					<a href="#" data-activates="slide-out" class="show-on-large cog" >
+						<i class="material-icons dp48">settings</i>
+					</a>
+					
+						<i class="material-icons dp48" id="btnMostrarBusquedaAvanzada" >find_in_page</i>
+					
+				</div>
+				
+				<!--Pantalla de búsqueda avanzada -->
+					<div class= "" style="min-height:75%;margin-top: 15px;max-width: 95%; display:none;" id="busquedaAvanzadaDiv">
+						<div class="header">Búsqueda avanzada</div>
+						<span id="cerrarBusquedaAvanzada" class="cerrarAlgo" style="top: -45px; display:none">x</span>
+						<div id="content" style="margin-bottom: 78px;">
+							<!-- <label>Rango de fecha</label> 
+							<br />--><br />
+							<div class="row" id='divFiltroFecha'>
+								<div class="switch col-md-3" style="display: inline-block;">
+									<label style="color: #fff;">
+										Último mes
+										<input type="checkbox" id="chkUltimoMes" checked="checked" >
+										<span class="lever" id="busquedaUltimoMes"></span>
+										<!-- On -->
+									</label>
+								</div>
+							
+								<div class='rangoFechasDiv'>
+									<label for="RangoInicio" style="color: #fff;">Desde</label>
+									<input type="text" class="datepicker fecha" id="RangoInicio" style="">
+									<label for="RangoFin" style="color: #fff;">hasta</label>
+									<input type="text" class="datepicker fecha" id="RangoFin" style="">
+								</div>
+								
+							</div>
+							<br />
+							<label for="cmbEstatusBusquedaAvanzada" id="lblEstatusBusquedaAvanzada" style="color: #fff;">Con estatus</label>
+							<div class="input-field col s12" id="estatusBusquedaAvanzada">
+								<select id="cmbEstatusBusquedaAvanzada" multiple>
+									<option value="" disabled selected></option>
+									<option value="1">En Captura</option>
+									<option value="2">Resultados completos</option>
+									<!-- <option value="3">Con resultados</option> -->
+									<!-- <option value="4">Completado</option> -->
+								</select>
+								<!-- <label>Materialize Multiple Select</label> -->
+							</div>
+							<br />
+							<label for="cmbEstudiosBusquedaAvanzada" id="lblEstudiosBusquedaAvanzada" style="color: #fff;">Con estudios</label>
+							<div class="input-field col s12" id="estudiosBusquedaAvanzada">
+								<select id="cmbEstudiosBusquedaAvanzada" multiple>
+									<option value="" disabled selected></option>
+									<option value="1">AMON</option>
+									<option value="2">APOB</option>
+									<option value="3">CD4</option>
+									<option value="4">CD8</option>
+									<option value="5">KAP</option>
+									<option value="6">CATU</option>
+								</select>
+								<!-- <label>Materialize Multiple Select</label> -->
+							</div>
+							<div class="input-field col s14 btn" id="btnBusquedaAvanzada" style="left: 90%;" >Buscar</div>
+							
+							<span style="display:none;" id="BusquedaSinResultados">No se encontraron resultados</span>
+							
+						</div>
+					</div>
+				<!-- fin pantalla de búsqueda avanzada-->				
+				
+			</div>
+		</header>
+		
+		<!--Pantalla: -->
+			<div style="display:none">
+
+			</div>
+		<!-- fin pantalla-->		
+		
+		<div class="ajuste" style="margin-bottom:130px;"></div>
+		<!--Pantalla de inicio de sesión-->
+			<div id="loginDiv" style="">
+				<div class="wrapper" style="height: 100%;top: 200px;">
+					<div class="container" id="divCredenciales" style="background-color: transparent;z-index: 2;">
+						<h1 id="identificacionDeUnidad"></h1>
+							<span style="color: red;font-weight: 600;font-size: 20px; display:none" id="loginFallo">Datos de autenticación incorrectos</span>
+						<form class="form">
+							<input type="text" placeholder="Usuario" id="usuario" parateclado="Usuario">
+							<input type="password" placeholder="Contraseña" id="contrasena" parateclado="contrasena">
+							<button type="submit" id="login-button">Login</button>
+						</form>
+					</div>
+				
+					<ul class="bg-bubbles" style="top: -250px;">
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+					</ul>
+				</div>
+			</div>
+		<!-- fin pantalla de inicio de sesión-->
+		
+		<!--Pantalla 1: listado de lotes-->
+			<div id="listadoDeLotes" style="display:none">
+				<div class="container-fluid">
+					<table class="display" id="tablaLotes" width="100%" cellspacing="0">
+						<thead>
+							<tr>
+								<th>Fecha de registro</th>
+								<th>N° de Lote</th>
+								<th>Estado</th>
+							</tr>
+						</thead>
+						<!--<tfoot>
+							<tr>
+								<th>Fecha de registro</th>
+								<th>N° de Lote</th>
+								<th>Estado</th>
+							</tr>
+						</tfoot>-->
+						<tbody>
+							<!-- <tr>
+								<td>2017/10/13 15:05</td>
+								<td>L-BJ000101</td>
+								<td>En captura</td>
+							</tr>
+							<tr>
+								<td>2017/10/14 10:05</td>
+								<td>L-BJ000100</td>
+								<td>Error en envio</td>
+							</tr>
+							<tr>
+								<td>2017/10/13 14:13</td>
+								<td>L-BJ000099</td>
+								<td>Capturado</td>
+							</tr>
+							<tr>
+								<td>2017/10/13 14:13</td>
+								<td>L-BJ000098</td>
+								<td>En Envio</td>
+							</tr>
+							<tr>
+								<td>2017/10/13 14:13</td>
+								<td>L-BJ000097</td>
+								<td>Esperando Resultados</td>
+							</tr>
+							<tr>
+								<td>2017/10/13 14:13</td>
+								<td>L-BJ000096</td>
+								<td>Parcialmente Recibido</td>
+							</tr>
+							<tr>
+								<td>2017/10/13 14:13</td>
+								<td>L-BJ000095</td>
+								<td>Recibido</td>
+							</tr> -->
+						</tbody>
+					</table>
+				</div>
+				
+				<a class="btn-floating btn-large waves-effect waves-light in-corner-dr" id="agregarLote"><i class="material-icons" style="font-style: normal;">add</i></a>
+				
+				
+				<div class="container" id="agregarNuevoLote" style="overflow: hidden; display:none;">
+					<div class="header">Nuevo lote</div>
+					<span id="cerrarCapturaNuevoLote" class="cerrarAlgo" style="top: -45px;">x</span>
+					<div class="content">
+						<!-- <label for="CapturaNombreLote" class="active">Nombre<input type="text" id="CapturaNombreLote"></label><br> -->
+						<!-- <label for="capturaNumeroDeLote" class="active">Número de lote<input type="text" id="capturaNumeroDeLote"></label> -->
+						<!-- <label for="capturaEstudios">estudios<input type="text" id="capturaEstudios"></label> -->
+						¿Estas seguro de que deseas agregar este lote?
+						<div style="text-align:right">
+							<a class="waves-effect waves-light btn" id="AceptarNuevolote">Aceptar</a>
+						</div>
+						<input type="text" id="controlfilasLote" value="0" style="display:none">
+					</div>
+				</div>
+				
+			</div>
+		<!-- fin pantalla 1-->
+		
+		<!--Pantalla 2: tubos registrados en un lote específico -->
+			<div id="tubosPorLote" style="display:none">
+			
+				<div id="btnregresarALotes" style="cursor:pointer"><i class="material-icons dp48" style="position: absolute;margin-top: -20px;margin-left: 15px;">keyboard_arrow_left</i></div>
+				<div id="botonesTubos" style="margin-top: 10px; margin-bottom: 25px; margin-left: 10px;">
+					<!-- <div style="text-align: center;margin-top: 30px;font-size: 15px;" id="finalLote">Enviar a maquilador</div> -->
+					<a class="waves-effect waves-light btn" id="finalLote">Enviar a maquilador</a>
+					<a class="waves-effect waves-light btn" id="btnGuardaLote">Guardar</a>
+					<a class="waves-effect waves-light btn" id="btnImprimeLote">Reimprimir</a>
+					
+					<a class="waves-effect waves-light btn btnReintentar" id="btnReintentarLis" obj="lote" service="ReintentarEnvioLis" style="display:none">Solicitar a LIS</a>
+					<a class="waves-effect waves-light btn btnReintentar" id="btnReintentarMaquilador" obj="lote" service="ReintentarEnvioMaquilador" style="display:none">Reintentar (Maquilador)</a>
+					<a class="waves-effect waves-light btn btnReintentar" id="btnReintentarResultados" obj="lote" service="ReintentarEnvioResultados" style="display:none">Reintentar (Resultados)</a>
+				</div>
+			
+				<!-- <div id="btnregresarALotes" style="cursor:pointer"><i class="material-icons dp48" style="position: absolute;margin-top: -20px;">arrow_back</i></div> -->
+				<span style="transform: translate(50%,-25px);margin-top: -80px;font-size: 25px;position: absolute;right: calc(10% + 80px);">Lote: </span><span id="loteSeleccionado"></span>
+				<div class="container-fluid">
+					<table class="display" id="tubosDeLote" width="100%" cellspacing="0">
+						<thead>
+							<th>Folio Local</th>
+							<th>Folio Maquilador</th>
+							<th>Paciente</th>
+							<th>Estudios</th>
+							<th>Estado</th>
+						</thead>
+						<!--<tfoot>
+							<th>Folio Local</th>
+							<th>Folio Analizador</th>
+							<th>Paciente</th>
+							<th>Estudios</th>
+							<th>Estado</th>
+						</tfoot>-->
+						<tbody>
+							<tr>
+								<td>20171014001</td>
+								<td>BJ000587</td>								
+								<td>Alfreds Futterkiste</td>
+								<td><span class="estudio">Gastrina</span></td>
+								<td>Enviado</td>
+							</tr>
+							<tr>
+								<td>20171014009</td>
+								<td>BJ000588</td>								
+								<td>Francisco Chang</td>
+								<td><span class="estudio">BH</span> <span class="estudio">Gastrina</span></td>
+								<td>Enviado</td>
+							</tr>
+							<tr>
+								<td>20171014014</td>
+								<td>BJ000589</td>								
+								<td>Pédro Páramo</td>
+								<td><span class="estudio">Globulinas</span></td>
+								<td>Enviado</td>
+							</tr>
+							<tr>
+								<td>20171014105</td>
+								<td>BJ000590</td>								
+								<td>Helena Guzmán</td>
+								<td><span class="estudio">Gastrina</span></td>
+								<td>Enviado</td>
+							</tr>
+							<tr>
+								<td>20171014200</td>
+								<td>BJ000591</td>								
+								<td>Juan Barrera</td>
+								<td><span class="estudio">Hemocultivo</span></td>
+								<td>Error de envio</td>
+							</tr>
+							<tr>
+								<td>20171014201</td>
+								<td>BJ000592</td>								
+								<td>Giovanni López</td>
+								<td><span class="estudio">BH</span></td>
+								<td>Recibido</td>
+							</tr>
+							<tr>
+								<td>20171014234</td>
+								<td>BJ000593</td>								
+								<td>Mildred rojo</td>
+								<td><span class="estudio">BH</span></td>
+								<td>Recibido</td>
+							</tr>
+						</tbody>
+					</table>
+					
+					
+					<a class="btn-floating btn-large waves-effect waves-light in-corner-dr" id="agregarTuboALote"><i class="material-icons" style="font-style: normal;">add</i></a>
+					<a class="btn-floating btn-large waves-effect waves-light in-corner-dr" id="deternerLecturaContinua" style="display:none"><i class="material-icons" style="font-style: normal;">pause</i></a>
+					<div id="msgEsaneoContinuo" style="display:none">Ahora puede comenzar a escanear</div>
+					
+					
+					<!--panel de orden con formato de tabla para abrirlo en la tabla de tubos-->
+					<table style='display:none'>
+						<tbody>
+							<tr id="panelDeOrden" class="panelDeOrden" style="display: table-row;">
+								<td colspan="5">
+									<!-- <span id="cerrarPanelDeOrden" class="cerrarPanel">x</span> -->
+									<div>
+										<label>N° de tubo: </label>
+										<span class="numeroDeLote_panelDeOrden"></span>
+									</div>
+									<div>
+										<label>Paciente: </label>
+										<span class="paciente_panelDeOrden"></span>
+										<input type="text" id="capturarNombre" paraTeclado="pacienteTextbox" class="capturarNombre" style="max-width: 200px;display:none">
+										<a class="waves-effect waves-light btn" id="aceptarCambioNombre" style="display:none"><i class="material-icons left" style="margin-right: 0px;">check</i></a>
+									</div>
+									<div>
+										<label>Estudios: </label>
+										<span class="estudios_panelDeOrden" style="display:none"></span>
+									</div>
+																		
+									<div id="editarResgisto">
+										<span id="texto" style="display:none;">Exámenes registrados para este tubo:</span>
+										
+										<div id="agregados" class="agregados" style="display:none;">
+											<div class="listItem itemTubo" estudio="Globulinas">Globulinas</div>
+											<div class="listItem itemTubo" estudio="Haptoglobinas">Haptoglobinas</div>
+										</div>
+										
+										
+										<!--catálogo de exámenes clínicos-->
+										<div class="" id="CatalogoExamenes" style="width: 90%;">
+											<div class="header" style="display:none;">Exámenes clínicos</div>
+											<span id="cerrarCatalogoExamenes" class="cerrarAlgo" style="display:none;top: -45px;">x</span>
+											<div class="" >
+												<div class="" id="botonesExamenes">
+													<div class="listItem itemCatalogo" estudio="AMON">AMON</div>
+													<div class="listItem itemCatalogo" estudio="APOB">APOB</div>
+													<div class="listItem itemCatalogo" estudio="CD4">CD4</div>
+													<div class="listItem itemCatalogo" estudio="CD8">CD8</div>
+													<div class="listItem itemCatalogo" estudio="KAP">KAP</div>
+													<div class="listItem itemCatalogo" estudio="CATU">CATU</div>
+												</div>
+												
+												<br /><br />
+												<div style="text-align:right;position: absolute;right: 105px;margin-top: -155.5px;z-index:0" >
+													<!-- <a class="waves-effect waves-light btn" id="AceptarExamenes">Ocultar</a> -->
+													<i class="material-icons left" id="AceptarExamenes">keyboard_arrow_up</i>
+												</div>
+											</div>
+										</div>
+										
+										<a class="waves-effect waves-light btn-floating edit-panel" id="agregarEstudioATubo"  style="display:none;"><i class="material-icons left">add</i></a>
+									</div>
+									
+									<a class="waves-effect waves-light btn-floating edit-panel" id="editarTubo" style="display:none;"><i class="material-icons left">edit</i></a>
+									<a class="waves-effect waves-light btn-floating edit-panel" id="eliminarTubo" style="left: 95%;top: -150px;" ><i class="material-icons left">delete</i></a>
+									
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					
+					<!--confirmacion para quitar tubo de un lote-->
+					<div class="container" id="ConfirmarQuitarTubo" style="display:none">
+						<div class="header">Eliminar tubo <span id="TuboAquitar"></span> </div>
+						<span id="cerrarQuitarTubo" class="cerrarAlgo" style="top: -45px;">x</span>
+						<div class="content">
+							¿Estas seguro de que deseas eliminar este tubo del lote?
+							<!-- <label for="capturaEstudios">estudios<input type="text" id="capturaEstudios"></label> -->
+							
+							<div style="text-align:right">
+								<a class="waves-effect waves-light btn" id="BtnConfirmarQuitarTubo">Aceptar</a>
+							</div>
+							<input id="controlfilas" value="0" style="display:none" type="text">
+						</div>
+					</div>
+
+					
+
+				</div>
+				
+				
+				
+				
+				<!-- formulario para agregar tubo a lote -->
+				<div class="container abrirOculto" id="agregarNuevoTubo" style="display:none">
+					<div class="header">Nuevo registro</div>
+					<span id="cerrarCapturaNuevoRegistro" class="cerrarAlgo" style="top: -45px;">x</span>
+					<div class="content">
+						<label for="capturaNumeroDeTubo">Número de tubo<input type="text" id="capturaNumeroDeTubo"></label>
+						<label for="CapturaPaciente">Paciente<input type="text" id="CapturaPaciente"></label><br />
+						<!-- <label for="capturaEstudios">estudios<input type="text" id="capturaEstudios"></label> -->
+						
+						<div style="text-align:right">
+							<a class="waves-effect waves-light" id="AceptarNuevoTubo">Aceptar</a>
+						</div>
+						<input type="text" id="controlfilas" value="0" style="display:none">
+					</div>
+				</div>
+				
+				<!-- confirmación, ¿desea guardar antes de salir? -->
+				<div class="container" id="PreguntaGuardar" style="display: none;">
+					<div class="header">El lote ha cambiado <span id="TuboAquitar"></span> </div>
+					<span id="cerrarQuitarTubo" class="cerrarAlgo" style="top: -45px;">x</span>
+					<div class="content">
+						¿Desea guardar los cambios antes de salir?
+						
+						<!-- <label for="capturaEstudios">estudios<input type="text" id="capturaEstudios"></label> -->
+						
+						<div style="text-align:right">
+							<a class="waves-effect waves-light btn" id="BtnSalirSinGuardar">Salir sin guardar</a>
+							<a class="waves-effect waves-light btn" id="BtnGuardarSalir">Guardar y salir</a>
+							<!-- <a class="waves-effect waves-light btn" id="aceptarPreguntaGuardar">Aceptar</a> -->
+						</div>
+						<input id="controlfilas" value="0" style="display:none" type="text" parateclado="controlfilas">
+					</div>
+				</div>
+				
+			</div>
+		<!-- fin pantalla 2-->
+		
+		<!--Pantalla: Configuración inicial-->
+			<div id="configuracionInicial" style="display:none">
+				<div class="background" style="background-image: url(imagenes/c.png);text-align: right;background-size: cover;height: 150px;padding-right: 5%;">
+					<h1 id="tituloConfiguracionInicial" style="font-family:Roboto;display:inline-block;"><b>Pasteur</b> <span style="font-weight: 200;">EAV</span></h1>
+				</div>
+				<!-- <br /> -->
+				<div class="content" >
+					<div class="row">
+						<div class="col-sm-3" >
+							<h3 class="tituloConfiguracion">Unidad</h3><br />
+							<input type="text" id="ipImpresora" style="max-width:150px;">
+						</div>
+					
+						<div class="col-sm-3" >
+							<h3 class="tituloConfiguracion">Impresora</h3><br />
+							<input type="text" id="ipImpresora" style="max-width:150px;">
+							<div class="btn">Probar impresora</div>
+						</div>
+						
+					</div>
+				</div>
+				Finalizar
+			</div>
+		<!-- fin pantalla-->
+		
+		<div class="overlay" style=""></div>
+		
+		<style>
+			label {
+				font-size: 1em;
+				color: #000;
+			}
+		</style>
+		
+		
+		<!-- barra lateral -->
+		<ul id="slide-out" class="side-nav" style="width: 100%;">
+			<li>
+				<div class="user-view">
+				<div class="background" style="background-image:url(imagenes/a.jpg);text-align: right;background-size: cover;">
+				<img src="imagenes/logoBlanco.png" style="height: 80%;margin: 15px;">
+				</div>
+					<a href="#!user"><img class="circle" src="imagenes/eav.png"></a>
+					<a href="#!name"><span class="white-text name">Wojciech Hernán Sanjuán Szklarz</span></a>
+					<a href="#!email"><span class="white-text email">Jaime García Palma</span></a>
+					<a href="#!salir" style="position: absolute;top: 15px;right: 15px;" id="btnSalir"><span class="white-text email">Salir</span></a>
+				</div>
+			</li>
+						
+			<li class="configBar">
+				<label>Modo Manual</label>
+				<div class="switch">
+					<label>
+						Off
+						<input type="checkbox" checked="checked" id="probando">
+						<span class="lever"></span>
+						On
+					</label>
+				</div>
+			</li>
+			<li class="configBar" style="padding-right: 15px;">
+				<label>Importar resultados</label>
+				<div class="file-field input-field">
+				
+				  <div class="btn">
+					<span class="material-icons dp48" style="margin-top: -5px;">file_upload</span>
+					<input multiple="" type="file">
+				  </div>
+				  <div class="file-path-wrapper">
+					<input class="file-path validate" placeholder="Seleccione archivos a cargar" type="text">
+				  </div>
+				</div>
+
+			</li>
+			<!-- <li class="configBar" style="padding-right: 15px;"> -->
+				<!-- <label>Estudios disponibles</label> -->
+				<!-- <div class="input-field col s4" id="CatalogoDeEstudiosConfig"> -->
+					<!-- <select multiple> -->
+						<!-- <option value="" disabled selected></option> -->
+						<!-- <option value="1" selected>BH</option> -->
+						<!-- <option value="2" selected>EGO</option> -->
+						<!-- <option value="3" selected>Globulinas</option> -->
+						<!-- <option value="4" selected>Gastrina</option> -->
+						<!-- <option value="5" selected>Haptoglobinas</option> -->
+						<!-- <option value="6" selected>Hemocultivo</option> -->
+					<!-- </select> -->
+					<!-- <!-- <label>Materialize Multiple Select</label> --> 
+				<!-- </div> -->
+			<!-- </li>					 -->
+			<li class="configBar">
+				<a download="listadoDeLotes.xls" href="#" onclick="return ExcellentExport.excel(this, 'listadoDeLotes', 'Lotes');"> <label>Exportar lotes</label></a>
+			</li>
+			
+			<li class="configBar">
+				<a id="SimularConexion"> <label>Conectar/Desconectar</label></a>
+			</li>
+			
+			<li class="configBar">
+				<label>Conexión LIS</label>
+				<a id="SimularConexionLis"> <label>Conectar/Desconectar</label></a>
+				<span>Tiempo de actualización</span><input type="text" id="txtTiempoActualizacionLis"> <br />
+				<span>Tiempo de respuesta</span><input type="text" id="txtTiempoRespuestaLis"> 
+				<div class="btn" id="btnOkTiempos">OK</div>
+			</li>
+			
+			<li class="configBar">
+				<a id="btnImprimeLote"> <label>Imprimir lote</label></a>
+			</li>
+			
+			<li class="configBar">
+				<a class="waves-effect waves-light btn" id="verCargador">cargador</a>
+			</li>
+			
+			
+		</ul>
+    
+	
+		<!-- teclado -->
+		<div class="keyboard" style='display:none'>
+		
+			<div style="color: #fff;/*! min-height: 25px; */" id="ocultarTeclado"><i style="/*! position: absolute; *//*! margin-top: -20px; */" class="material-icons">keyboard_arrow_down</i></div>
+		
+			<div class="keyboard-row">
+				<button type="button" class="keyboard-button keyboard-numberButton">1</button>
+				<button type="button" class="keyboard-button keyboard-numberButton">2</button>
+				<button type="button" class="keyboard-button keyboard-numberButton">3</button>
+				<button type="button" class="keyboard-button keyboard-numberButton">4</button>
+				<button type="button" class="keyboard-button keyboard-numberButton">5</button>
+				<button type="button" class="keyboard-button keyboard-numberButton">6</button>
+				<button type="button" class="keyboard-button keyboard-numberButton">7</button>
+				<button type="button" class="keyboard-button keyboard-numberButton">8</button>
+				<button type="button" class="keyboard-button keyboard-numberButton">9</button>
+				<button type="button" class="keyboard-button keyboard-numberButton">0</button>
+				<button type="button" class="keyboard-button" teclaEspecial="borrar">
+					<svg class="teclado" width="24" height="24" viewBox="0 0 24 24" style="position: initial;width: 30%;">
+						<path d="M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-3 12.59L17.59 17 14 13.41 10.41 17 9 15.59 12.59 12 9 8.41 10.41 7 14 10.59 17.59 7 19 8.41 15.41 12 19 15.59z"></path>
+					</svg>
+				</button>
+			</div>
+			<div class="keyboard-row">
+				<button type="button" class="keyboard-button">q</button>
+				<button type="button" class="keyboard-button">w</button>
+				<button type="button" class="keyboard-button">e</button>
+				<button type="button" class="keyboard-button">r</button>
+				<button type="button" class="keyboard-button">t</button>
+				<button type="button" class="keyboard-button">y</button>
+				<button type="button" class="keyboard-button">u</button>
+				<button type="button" class="keyboard-button">i</button>
+				<button type="button" class="keyboard-button">o</button>
+				<button type="button" class="keyboard-button">p</button>
+			</div>
+			<div class="keyboard-row">
+				<div class="keyboard-halfButton"></div>
+				<button type="button" class="keyboard-button">a</button>
+				<button type="button" class="keyboard-button">s</button>
+				<button type="button" class="keyboard-button">d</button>
+				<button type="button" class="keyboard-button">f</button>
+				<button type="button" class="keyboard-button">g</button>
+				<button type="button" class="keyboard-button">h</button>
+				<button type="button" class="keyboard-button">j</button>
+				<button type="button" class="keyboard-button">k</button>
+				<button type="button" class="keyboard-button">l</button>
+				<button type="button" class="keyboard-button">ñ</button>
+				<div class="keyboard-halfButton"></div>
+			</div>
+			<div class="keyboard-row">
+				<button type="button" class="keyboard-button" teclaEspecial="shift">
+					<svg width="24" height="24" viewBox="0 0 32 32" style="position: initial;width: 30%;">
+						<path d="M21 28h-10c-0.552 0-1-0.448-1-1v-11h-4c-0.404 0-0.769-0.244-0.924-0.617s-0.069-0.804 0.217-1.090l10-10c0.391-0.39 1.024-0.39 1.414 0l10 10c0.286 0.286 0.372 0.716 0.217 1.090s-0.519 0.617-0.924 0.617h-4v11c0 0.552-0.448 1-1 1zM12 26h8v-11c0-0.552 0.448-1 1-1h2.586l-7.586-7.586-7.586 7.586h2.586c0.552 0 1 0.448 1 1v11z"></path>
+					</svg>
+				</button>
+				<button type="button" class="keyboard-button">z</button>
+				<button type="button" class="keyboard-button">x</button>
+				<button type="button" class="keyboard-button">c</button>
+				<button type="button" class="keyboard-button">v</button>
+				<button type="button" class="keyboard-button">b</button>
+				<button type="button" class="keyboard-button">n</button>
+				<button type="button" class="keyboard-button">m</button>
+				<button type="button" class="keyboard-button" >,</button>
+			</div>
+			<div class="keyboard-row">
+				<button type="button" class="keyboard-button keyboard-space"> </button>
+				<button type="button" class="keyboard-button keyboard-done-button">.</button>
+			</div>
+		</div>
+		
+		
+	
+		<!-- loader -->
+		<div id="Cargando" style="display:none">
+			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="-1100 -50 3000 1000" style="enable-background:new 0 0 1000 1000;" xml:space="preserve"><g class="tube"><rect x="-7325.6" y="-5817.3" style="display:none;fill:#294E5F;" width="18310.8" height="20291.5"/><path style="fill:#fff;stroke:#7D98A8;stroke-width:9;" d="M399,328.9v478.4c0,54.9,43.4,100.6,98.3,102c57,1.5,103.6-44.3,103.6-100.9V328.9H399z"/><path style="fill:#7D98A8;" d="M435.3,411v395.5c0,35.7,28.3,65.5,64,66.4c37.1,1,67.5-28.8,67.5-65.7V411H435.3z"/><g><circle class="bubble" id="b-1" style="fill:#FFF;" cx="476.7" cy="455.5" r="15"/><circle class="bubble" id="b-2" style="fill:#FFF;" cx="526.9" cy="759.8" r="15"/><circle class="bubble" id="b-3" style="fill:#FFF;" cx="500.5" cy="709.9" r="15"/><circle class="bubble" id="b-4" style="fill:#FFF;" cx="468.6" cy="658.5" r="15"/><circle class="bubble" id="b-5" style="fill:#FFF;" cx="500.5" cy="608.2" r="15"/><circle class="bubble" id="b-6" style="fill:#FFF;" cx="526.9" cy="556.4" r="15"/></g><path style="fill:#fff;stroke:#EF446D;stroke-width:9;" d="M590.6,90.7H409.4c-16.6,0-30,13.4-30,30v198.3c0,5.5,4.5,10,10,10h221.2c5.5,0,10-4.5,10-10V120.7
+      			C620.6,104.1,607.2,90.7,590.6,90.7z"/><path style="fill:#EF446D;" d="M584.5,292.3h-170c-2.5,0-4.5-2-4.5-4.5s2-4.5,4.5-4.5h170c2.5,0,4.5,2,4.5,4.5
+      			S587,292.3,584.5,292.3z"/><line style="fill:none;stroke:#EF446D;stroke-width:9;stroke-linecap:round;stroke-miterlimit:10;" x1="423.9" y1="280.6" x2="423.9" y2="137.5"/><line style="fill:none;stroke:#EF446D;stroke-width:9;stroke-linecap:round;stroke-miterlimit:10;" x1="453.8" y1="280.6" x2="453.8" y2="137.5"/><line style="fill:none;stroke:#EF446D;stroke-width:9;stroke-linecap:round;stroke-miterlimit:10;" x1="483.6" y1="280.6" x2="483.6" y2="137.5"/><line style="fill:none;stroke:#EF446D;stroke-width:9;stroke-linecap:round;stroke-miterlimit:10;" x1="513.5" y1="280.6" x2="513.5" y2="137.5"/><line style="fill:none;stroke:#EF446D;stroke-width:9;stroke-linecap:round;stroke-miterlimit:10;" x1="543.4" y1="280.6" x2="543.4" y2="137.5"/><line style="fill:none;stroke:#EF446D;stroke-width:9;stroke-linecap:round;stroke-miterlimit:10;" x1="573.3" y1="280.6" x2="573.3" y2="137.5"/></g></svg>
+		</div>
+		<div class="overlay2" style="display: none;"></div>
+		
+		<div id="CaposDeCOntrol" style="display:none">
+			<input type="text" style="display:none" id="lecturaContinuaTubos" value="1">
+			<input type="text" style="display:none" id="textoTeclado">
+			<input type="text" style="display:none" id="huboCambios">
+		</div>
+		<script src="Scripts/CrearZPL.js"></script>
+		<script src="Scripts/jquery-1.7.1.min.js"></script>
+		<script src="materialize/js/materialize.min.js"></script>
+		<script type="text/javascript" src="Scripts/DataTables/datatables.min.js"></script>
+		<script type="text/javascript" src="Scripts/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+		<script src="Scripts/excellentexport.js"></script>
+				
+		
+		
+		
+		<script>
+
+		//Modificacion por wojciech
+				function pad (n, length) {
+					var  n = n.toString();
+					while(n.length < length)
+						n = "0" + n;
+					return n;
+				}
+				// termina modificacion
+		
+		/************ Pantalla de login ************/
+		
+		$("#login-button").click(function(event){
+			event.preventDefault();
+			var usuario = $('#usuario').val().toLowerCase();;
+			var contrasena = $('#contrasena').val();
+			 
+			var resultado = VerificaUsuario(usuario, contrasena);
+			
+			if ( resultado )
+			{
+				GeneraTablaLote (100);
+				$('.keyboard').hide();
+				$('.rangoFechasDiv').hide();
+				$('.overlay').fadeOut();
+				$('#loginDiv form').fadeOut(500);
+				$('.wrapper').addClass('form-success');
+				$('#listadoDeLotes').show('puff');
+				$('#loginDiv').hide('scale');
+				
+				$('#btnConfiguracion').show();
+				
+				$('#usuario').val('');
+				$('#contrasena').val('');
+				
+				$('#divCredenciales').removeClass('subeTeclado');
+			} 
+			else {
+				$('#loginFallo').show('scale');
+			}
+				 
+		});
+		
+		
+		/************ Pantalla 1: listado de lotes ************/ 
+		
+		function cargarResultados(){
+			
+			console.log('entro');
+			
+			$.ajax({
+				async:true,
+				url : "php/ProcesaPaquetesResultados.php",
+				method: "POST",
+				dataType : "json",
+												
+			}).done(function(entrada){
+				
+
+			}).fail(function(error){
+				console.log(error);
+			});
+		};
+		
+		/*----------- Script para tablas de tubos y lotes -----------*/
+			$(document).ready(function(){
+				obtenUnidad();
+				obtenEstudios();
+				ServicioActualizador();
+				
+				tiempoActualizar = parseInt($('#txtTiempoActualizacionLis').val());
+				if(tiempoActualizar == 0 || tiempoActualizar == "" || isNaN(tiempoActualizar))
+					tiempoActualizar = 
+					
+					
+				window.setInterval(function(){
+				  ServicioActualizador();
+				  GeneraTablaLote();
+				}, tiempoActualizar);
+				
+				
+				<!-- var FnActualizar= function(){ -->
+					<!-- <!-- console.log(tiempoActualizar); --> -->
+					<!-- timeout = setTimeout(myFunction, tiempoActualizar); -->
+					<!-- alert(tiempoActualizar) -->
+				<!-- } -->
+				<!-- var timeout = setTimeout(FnActualizar, tiempoActualizar); -->
+				
+				
+				
+				
+				
+				
+				
+				<!-- setInterval('cargarResultados()',3000); -->
+				TiempoEspera = parseInt($('#txtTiempoRespuestaLis').val());
+				if(TiempoEspera == 0 || TiempoEspera == "" || isNaN(TiempoEspera))
+					TiempoEspera = 3000;
+					
+				window.setInterval(function(){
+					colocarEstudios();
+				}, TiempoEspera);
+				
+				/*----Si se requiere que ingrese directamente sin login----*/
+				var loginDirecto = sessionStorage.getItem('loginDirecto')
+				if(loginDirecto === "true"){
+					sessionStorage.setItem('loginDirecto', false);
+					GeneraTablaLote (100);
+					$('.keyboard').hide();
+					$('.rangoFechasDiv').hide();
+					$('.overlay').fadeOut();
+					$('#loginDiv form').fadeOut(500);
+					$('.wrapper').addClass('form-success');
+					$('#listadoDeLotes').show('puff');
+					$('#loginDiv').hide('scale');
+					
+					$('#btnConfiguracion').show();
+					
+					$('#usuario').val('');
+					$('#contrasena').val('');
+				}
+				
+				
+				$('#identificacionDeUnidad').text(unidad[1]);
+				$('#claveUnidad').text(unidad[0]);
+				
+				$('html').on('click', 'table#tablaLotes> tbody > tr ', function () {
+					var loteSeleccionado = $(this).find("td:nth-child(2)").html();
+					fechaDeCapturaLoteSeleccionado = $(this).find("td:nth-child(1)").html();
+					
+					<!-- Formar fecha  para simular cambios de estatus-->
+					<!-- var fechaDeCaptura = new Date(fechaDeCapturaLoteSeleccionado.split(' ')[0]); -->
+					<!-- fechaDeCaptura = fechaDeCaptura.addDays(1); -->
+					<!-- var horaSeparada = fechaDeCapturaLoteSeleccionado.split(' ')[1].split(':'); -->
+					<!-- fechaDeCaptura.setHours(horaSeparada[0]); -->
+					<!-- fechaDeCaptura.setMinutes(horaSeparada[1]); -->
+					<!-- fechaDeCaptura.setSeconds(horaSeparada[2]); -->
+					
+					<!-- var fechaActual = new Date(); -->
+					<!-- var diferenciaDeFechas = Math.abs(fechaActual - fechaDeCaptura) / 36e5; -->
+
+					//---- Colocar número de lote seleccionado en la pantalla de lote	
+					$('#loteSeleccionado').text(loteSeleccionado);
+					GeneraTablaTubos(10);
+					$('#listadoDeLotes').hide('slow');
+					$('#tubosPorLote').fadeIn();
+												
+					//---- verificar si el lote seleccionado está finalizado, para mostrar u coultar edición
+					var EstadoDeLoteSeleccionado = $(this).find("td:nth-child(3)").html();
+					if(EstadoDeLoteSeleccionado.toLowerCase() === 'Enviado a maquilador'.toLowerCase() || EstadoDeLoteSeleccionado.toLowerCase().includes('Resultados'.toLowerCase()) || EstadoDeLoteSeleccionado.toLowerCase() === 'Finalizada Captura'.toLowerCase()){
+						ocultarEdicionDeLote();
+						$('#btnReintentarLis').show();
+					}
+					else{ 
+						mostrarEdicionDeLote();
+						$('#btnReintentarLis').hide();
+					}
+					
+					$('#huboCambios').val('0');
+					<!-- $('td:contains("Enviado a maquilador")').html("Con resultados"); -->
+					<!-- $('td:contains("Finalizada Captura")').html("Con resultados"); -->
+					
+					<!-- var EstadoDeLote = $('#tubosDeLote').find("td:last").html(); -->
+					<!-- if(EstadoDeLote === 'Resultados completos') -->
+						<!-- $('#btnImprimeLote').hide(); -->
+					<!-- else if(EstadoDeLote !== 'En Captura')$('#btnImprimeLote').show(); -->
+					
+					var EstadoDeLote = $('#finalLote').text();
+					 if(EstadoDeLote === 'Enviado a maquilador')
+						$('#btnImprimeLote').show();
+					else $('#btnImprimeLote').hide();
+					
+				});				
+				
+				/************ Pantalla 2: tubos registrados en un lote específico ************/ 
+				
+				/*----------- mostrar panel de orden -----------*/
+				$('html').on('click', 'table#tubosDeLote> tbody > tr:not(".panelDeOrden") ', function () {
+					var estaEnModoEdición = $(this).hasClass('enEdicion');;
+					var estado = $(this).find("td:last").text();
+					//---- el registro entra en modo de edición sólo si el lote no está finalizado
+					if( estaEnModoEdición == '0' && estado !== 'Solicitando a LIS'){
+						$('#panelDeOrden').hide("slide"); 
+						<!-- $('#agregarTuboALote').hide(); -->
+						
+						//---- obtener la información del registro que se desea
+						var tableData = $(this).children("td").map(function() {
+							return $(this).text();
+						}).get();		
+						
+						//---- Crear Nuevo panel de orden
+						var timestamp = Math.floor(Date.now() / 1000)
+						var idNuevoPanel = "panelDeOrden-" + tableData[1] + '_' + timestamp;
+						var nuevopanel = $('#panelDeOrden').clone().attr('ID_tubo', tableData[0]).show().insertAfter(this);
+						nuevopanel.attr('id', idNuevoPanel)
+						
+						$('#' + idNuevoPanel + ' .capturarNombre').attr('paraTeclado',timestamp)
+
+						//---- Colocar la información en el panel de orden creado(en la primera sección)
+						$('#' + idNuevoPanel + ' .numeroDeLote_panelDeOrden').text(tableData[0]);
+						$('#' + idNuevoPanel + ' .paciente_panelDeOrden').text(tableData[2]);
+						$('#' + idNuevoPanel + ' .estudios_panelDeOrden').text(tableData[3]);
+						<!-- $('#panelDeOrden').insertAfter(this);  -->
+						 
+						<!-- $('#panelDeOrden').show("slide");  -->
+						//---- llenar segunda sección del panel ("Exámenes registrados para este tubo:")
+						var codigo  = "";
+						var listadoDeEstudios = tableData[3].split(" ");
+						
+						var codigoTabla = "<table><thead><tr><th>Abreviatura</th><th>Resultado</th><th>Unidad</th><th>Valores de referencia</th></tr></thead>"
+						for(var i in listadoDeEstudios){
+							codigo += '<div class="listItem itemTubo" estudio="' + listadoDeEstudios[i] + '">' + listadoDeEstudios[i] + '</div>'
+							
+							<!-- var estado = $(this).find("td:last").text();//Con resultados -->
+							if(estado === 'Resultados completos'){//---- emular resultados
+								if(listadoDeEstudios[i] !== ''){
+								codigoTabla += '<tr>';
+								codigoTabla += '<td>' + listadoDeEstudios[i] + '</td>'; //Abreviatura
+								codigoTabla += '<td>' + (28 + Math.floor((Math.random() * 130) + 1)).toString() + '</td>'; //Resultado
+								codigoTabla += '<td>' + 'mg' + '</td>'; //Unidad
+								codigoTabla += '<td>' + (30 + Math.floor((Math.random() * 130) + 1)).toString() + '-' + (100 + Math.floor((Math.random() * 25) + 1)).toString() + '</td>'; //Valores de referencia
+								codigoTabla += '</tr>';
+								}
+							}
+						}
+						codigoTabla += "</table>";
+						codigoTabla += "<div style='position: absolute;right: 25px;' class='waves-effect waves-light btn btnReintentar' obj='tubo' object='" + tableData[1] + "'>Solicitar a lis</div>";
+						$('#' + idNuevoPanel + ' .agregados').html(codigo);
+						
+						//---- Seleccionar en el catalogo los estudios agregados
+						var listadoEstudiosTubo = tableData[3].split(' ');
+						$('#' + idNuevoPanel + ' #CatalogoExamenes .itemCatalogo').removeClass('estudioSeleccionado');
+
+							
+						for(var i in listadoEstudiosTubo){
+							var estudio = listadoEstudiosTubo[i].replace(/_/g,'');
+							$('#' + idNuevoPanel + ' #CatalogoExamenes div[estudio="' + estudio + '"]').addClass('estudioSeleccionado');
+						}
+						
+						//---- Si el lote está finalizado, el panel de muestra pero no permite modificar la información
+						if($('#finalLote').text() !== 'Enviar a maquilador'){
+							$('#' + idNuevoPanel + ' #CatalogoExamenes .itemCatalogo').removeClass('itemCatalogo');
+							$('#' + idNuevoPanel + ' .paciente_panelDeOrden').removeClass('paciente_panelDeOrden');
+							$('#' + idNuevoPanel + ' #CatalogoExamenes #botonesExamenes .itemCatalogo').removeClass('itemCatalogo');
+							
+							//---- ocultar estudios nno seleccionados
+							$('#' + idNuevoPanel + ' #CatalogoExamenes #botonesExamenes .listItem:not(".estudioSeleccionado")').hide();
+							<!-- $('#' + idNuevoPanel + ' #CatalogoExamenes #botonesExamenes .listItem').hide(); -->
+							//---- agregar tabla de resultados
+							if(estado === 'Resultados completos')
+							$('#' + idNuevoPanel + ' #botonesExamenes').html(codigoTabla);
+							
+						}
+						
+						if( tableData[4] === 'Error de transmisión de resultados al LIS'){
+							$('#' + idNuevoPanel + ' #botonesExamenes').append("<div class='waves-effect waves-light btn btnReintentar' id='' obj='tubo' service='ReintentarEnvioResultados'>Reintentar (Resultados)</div>");
+						}
+						
+						<!-- $('html,body').animate({ scrollTop: 400 }, 'slow'); -->
+						//---- Indicar que el registro está en modo edición
+						$(this).addClass('enEdicion');
+					}
+				});
+				
+				$('html').on('click', '.btnReintentar', function () {
+				
+					 <!-- $.ajax({ -->
+					  <!-- async:false,  -->
+					  <!-- method: "get", -->
+					  <!-- url: "php/ReintentarEnvioLis.php", -->
+					  <!-- dataType: "json" -->
+					<!-- }).done(function(data){		 -->
+								<!-- alert(data); -->
+						   <!-- });						  -->
+						<!-- }).fail(function(error){					   -->
+							<!-- alert("Por el momento no esta disponible el servicio, intente m\u00E1s tarde");					   -->
+						<!-- });	 -->
+				
+					var path = "php/" + $(this).attr('service') + ".php";
+					var tipoDeOjeto = $(this).attr('obj')
+					reintentarEnvio(path);
+					
+					
+				});
+				
+				$('html').on('click', '.btnRefreshTubo', function () {
+					var folioLis = $(this).attr('folioLis');
+					var folioMaquilador = $(this).attr('folioMaquilador');
+					var tubo = [folioLis,folioMaquilador, "Esperando respuesta"]
+					peticionesLIS.push(tubo);					
+				});
+				
+				function reintentarEnvio(ruta){
+					$.ajax({
+						url: ruta,
+						dataType: 'json',
+						success: function (datos) {
+							if (datos != '') {
+								alert(datos);
+							}
+						},
+						error: function () { alert("Se produjo un error") }
+					});
+				}
+				
+				<!-- $('html').on('click', '#cerrarPanelDeOrden', function () { -->
+					  <!-- $('#panelDeOrden').hide("slide");  -->
+					  <!-- <!-- $('#editarResgisto').hide(); --> -->
+					  <!-- $('#agregarTuboALote').fadeIn(); -->
+				<!-- }) -->
+				
+				$('html').on('click', '.cerrarPanel', function () {
+					var numeroTubo = $(this).parent().parent().attr('id_tubo');
+					$(this).parent().parent().hide("slide"); 
+					
+					<!-- $('#editarResgisto').hide(); -->
+					$('#agregarTuboALote').fadeIn();
+					$('table#tubosDeLote td:contains("' + numeroTubo + '")').parent().removeClass('enEdicion');
+				})
+				
+				$('#agregarEstudioATubo').click(function(){
+					//---- Seleccionar en el catalogo los estudios agregados
+					$('.content>.itemCatalogo').removeClass('estudioSeleccionado');
+										
+					$('#agregados').children().each(function(idx, val){
+					   var Propiedadestudio = $(this).attr('estudio');
+					   
+					   $('#CatalogoExamenes div[estudio="' + Propiedadestudio + '"]').addClass('estudioSeleccionado');
+					})
+
+					<!-- alert(estudiosSeleccionados); -->
+					
+					mostrarCatalogoExamenes();
+				});
+				
+				$('#cerrarCatalogoExamenes').click(function(){
+					ocultarCatalogoExamenes();
+				});
+				
+				$('#editarTubo').click(function(){
+					$('#editarResgisto').toggle('slow');
+				});
+				
+				$('.itemCatalogo').click(function(){
+					var texto = $(this).text();
+					var patt1 = /\s/g;
+					var estudio = texto.replace(/ /g,'');
+					
+					//---- Agregar a la lista en cuanto se de clic
+					<!-- $('#agregados').append('<div class="listItem itemTubo" estudio="' + estudio +'">' + texto + '</div>'); -->
+					<!-- ocultarCatalogoExamenes(); -->
+				});
+				
+				$('html').on('click', '#CatalogoExamenes .itemCatalogo', function () {
+					$(this).toggleClass('estudioSeleccionado');
+					var tuboAEditar = $(this).parents().eq(5).prop('id');;
+					if($(this).hasClass('estudioSeleccionado')){
+						AgregarMVCEstudio(LoteGlobal.substring(0,2), LoteGlobal.substring(2,5), tuboAEditar.substring(18,21), $(this).text(), 'Agregado');
+					} else {
+					    AgregarMVCEstudio(LoteGlobal.substring(0,2), LoteGlobal.substring(2,5), tuboAEditar.substring(18,21), $(this).text(), 'Borrado');
+					}
+				});
+				
+				$('html').on('click', '#CatalogoExamenes #AceptarExamenes', function () {
+					var tuboAEditar = $(this).parents().eq(5).prop('id');
+					<!-- alert($('#' + tuboAEditar + ' .numeroDeLote_panelDeOrden').text()) -->
+					var numeroTubo = $('#' + tuboAEditar + ' .numeroDeLote_panelDeOrden').text();
+					var EstudiosDeltubo = $('#' + tuboAEditar + ' #CatalogoExamenes .estudioSeleccionado').clone().removeClass('estudioSeleccionado').removeClass('itemCatalogo').addClass('itemTubo');
+					var estudiosParaTabla = EstudiosDeltubo.clone().removeClass('listItem').removeClass('itemCatalogo').addClass('estudio');
+					
+					var codigo = "";
+					var listaEstudios = "";
+					for(var i in estudiosParaTabla){
+						if(estudiosParaTabla[i].innerHTML !== undefined){
+							clase = estudiosParaTabla[i].innerHTML.replace(/ /g,'');
+							codigo += " <span class='estudio' class='" + clase + "'>" + estudiosParaTabla[i].innerHTML.replace(/ /g,'_') + "</span>";
+							// Modificacion por wojciech
+							//"panelDeOrden-FU101001_1509174805"
+							//AgregarMVCEstudio( LoteGlobal.substring(0,2), LoteGlobal.substring(2,5), tuboAEditar.substring(18,21) , estudiosParaTabla[i].innerHTML.replace(/ /g,'_') , 'Agregado');
+							// Termina modificacion							
+							listaEstudios += estudiosParaTabla[i].innerHTML + " ";
+						}
+					}
+					codigo = codigo.replace(" ", "");
+					
+					$('#' + tuboAEditar + ' #agregados').html(EstudiosDeltubo);
+					if(codigo !== "")
+						$('table#tubosDeLote td:contains("' + numeroTubo + '")').parent().find("td:last").prev().html(codigo);
+					$('#' + tuboAEditar + ' .estudios_panelDeOrden').text(listaEstudios);
+					
+					<!-- aplicar cambio de nombre si se modificó, pero no se ha aceptado -->
+					if($('#' + tuboAEditar + ' #aceptarCambioNombre').css('display') !== 'none')
+						$('#' + tuboAEditar + ' #aceptarCambioNombre').trigger('click');
+					
+					<!-- ocultarCatalogoExamenes(); -->
+					$('#' + tuboAEditar + ' .cerrarPanel').trigger('click');
+					$('#' + tuboAEditar + ' .cerrarPanel').parents().eq(2)
+					 <!-- $(this).parents().eq(5).remove(); -->
+					 $('#huboCambios').val('1');
+					 
+					 
+					 <!-- var c = $(this).parents().eq(5) -->
+					 <!-- $(this).parents().eq(5).removeClass('enEdicion'); -->
+					 var panelDeOrden = '#' + $(this).parents().eq(5).attr('id') + " ";
+					 var numeroDeTubo =  $(panelDeOrden + '.numeroDeLote_panelDeOrden').text();
+					 $('td:contains("' + numeroDeTubo + '")').parent().removeClass('enEdicion');
+					 
+					 
+					 $('#' + tuboAEditar).remove();
+				});
+				
+				$('html').on('click', '#listadoDeLotes #agregarLote', function () {
+					<!-- //---- Limpiar cuadros de texto -->
+					<!-- $('#CapturaNombreLote').val(''); -->
+					<!-- $('#capturaNumeroDeLote').val(''); -->
+					<!-- //---- Mostrar dialogo -->
+					<!-- $('#agregarNuevoLote').show('slow'); -->
+					<!-- $('.overlay').fadeIn(); -->
+				<!-- }); -->
+				
+				<!-- $('html').on('click', '#agregarNuevoLote #AceptarNuevolote', function () { -->
+					var codigo = '';
+					var NumeroDeLoteCapturado = $('#capturaNumeroDeLote').val();
+					var NombreCapturado = $('#CapturaNombreLote').val()
+					<!-- if(NumeroDeLoteCapturado !== '' || NombreCapturado !== ''){ -->
+						var claseDeFila = $("#controlfilasLote").val();
+						<!-- var codigo= ""; -->
+						<!-- if(claseDeFila === '0'){ -->
+							<!-- codigo = "<tr class='even'>"; -->
+							<!-- $("#controlfilasLote").val('1'); -->
+						<!-- } -->
+						<!-- else{ -->
+							<!-- codigo = "<tr class='odd'>"; -->
+							<!-- $("#controlfilasLote").val('0'); -->
+						<!-- } -->
+						
+						/*fecha de registro en el formato: yyyy-mm-dd hh:mm:ss */
+						var fechaActual = new Date();
+						var dd = fechaActual.getDate();
+						var mm = fechaActual.getMonth() + 1; //Enero = 0
+						var yyyy = fechaActual.getFullYear();
+						var hhmmss = fechaActual.getHours() + ":" + fechaActual.getMinutes() + ":" + fechaActual.getSeconds();
+						
+						var fechaDeRegistro = yyyy + "-" + mm + "-" + dd + " " + hhmmss;
+						var folio = calcularFolioLote();
+						
+						var LoteNuevo = [ fechaDeRegistro, folio.substring(0,2) , folio.substring(2,5), 'En captura', [] , 'Agregado' ];
+						MVCLotes.push(LoteNuevo);						
+						
+						<!-- codigo += "<td class='sorting_1'>" + fechaDeRegistro + "</td>"; -->
+						<!-- codigo += "			<td>" + folio + "</td>"; -->
+						<!-- codigo += "			<td>" + "En captura" + "</td>"; -->
+						<!-- codigo += "		</tr>"; -->
+						<!-- codigo += "</tr>"; -->
+						<!-- $('#tubosDeLote tbody').prepend(codigo); -->
+						
+						$('#cerrarCapturaNuevoLote').trigger('click');
+						var fir = $('#tablaLotes tbody').first();
+						$('#tablaLotes tbody tr').first().trigger('click');
+						<!-- $('#capturaNumeroDeLote').val(''); -->
+						<!-- $('#CapturaNombreLote').val(''); -->
+					<!-- } -->
+					<!-- else alert("Número de tubo y paciente son campos obligatorios"); -->
+						$('#tubosDeLote tbody').html(codigo);
+						
+						$('#agregarTuboALote').trigger('click');
+						$('#finalLote').text("Enviar a maquilador");
+						$('#btnImprimeLote').show();
+						$('#btnImprimeLote').hide();
+						peticionesLIS = [];
+				});
+				
+				function calcularFolioLote(){
+					var folios = [];
+					var table = document.getElementById("tablaLotes");
+					var tr = table.getElementsByTagName("tr");
+
+					  for (i = 0; i < tr.length; i++) {
+						td = tr[i].getElementsByTagName("td")[1];
+						if (td) {
+						  folios.push(td.innerHTML);
+						} 
+					  }
+					folios.sort();
+					
+
+					var ultimoFolio = typeof(ultimoFolio) == "undefined"? "FU00001" :  folios[folios.length-1];
+					
+					var idUnidad = ultimoFolio.substring(0,2);
+					var consecutivo = parseInt(ultimoFolio.substring(2,5)) + 1
+					// Modificacion por wojciech
+					var folioSiguiente = idUnidad + pad(consecutivo,3);					
+					LoteGlobal = folioSiguiente;
+					FolioGlobal = 0;
+					// Termina modificacion
+					return folioSiguiente;
+				}
+				
+				$('html').on('click', '#tubosPorLote #deternerLecturaContinua', function () {
+					$(this).hide();
+					$('#agregarTuboALote').show();
+					$('#agregarNuevoTubo').hide();
+					$('#msgEsaneoContinuo').hide('highlight');
+				});
+				
+				$('html').on('click', '#tubosPorLote', function () {
+					if($('#msgEsaneoContinuo').css('display') !== 'none' )
+						if($('#lecturaContinuaTubos').val() === '1' )
+							$("#capturaNumeroDeTubo").focus();
+				});
+				
+				$('html').on('blur', '#capturaNumeroDeTubo', function () {
+					if($('#msgEsaneoContinuo').css('display') !== 'none' ){
+						if($('#lecturaContinuaTubos').val() === '1' ){
+							$("#capturaNumeroDeTubo").focus();
+							$('#lecturaContinuaTubos').val('1');
+						}
+					}
+				});
+				
+				$('html').on('click', '.capturarNombre', function () {
+						$('#lecturaContinuaTubos').val('0');
+						
+				});
+				
+				$('html').on('blur', '.capturarNombre', function () {
+						$('#lecturaContinuaTubos').val('1');
+						
+				});
+				
+				$('html').on('click', '#tubosPorLote #agregarTuboALote', function () {
+					$(this).hide();
+					$('#deternerLecturaContinua').show();
+					$('#msgEsaneoContinuo').show('highlight');
+					
+					$('#agregarNuevoTubo').show('slow');
+					<!-- $('.overlay').fadeIn(); -->
+					setTimeout(function(){
+						$("#capturaNumeroDeTubo").focus();
+					}, 500); 
+				});
+				
+				
+				$('html').on('click', '#agregarNuevoTubo #AceptarNuevoTubo', function () {
+					//---- verificar si ese tubo ya existe en el lote
+					var tuboAIngresar = $('#capturaNumeroDeTubo').val();
+					var fila = $("#tubosDeLote tr:contains('" + tuboAIngresar + "')");
+					//--- Si no existe un registro para ese tubo
+					if(fila.length === 0){
+						//---- agregar tubo
+						var NumeroDeTuboCapturado = $('#capturaNumeroDeTubo').val();
+						$('#capturaNumeroDeTubo').val('');
+						var PacienteCapturado = $('#CapturaPaciente').val()
+						if(NumeroDeTuboCapturado !== '' ){ 
+							var claseDeFila = $("#controlfilas").val();
+							var codigo= "";
+							if(claseDeFila === '0'){
+								codigo = "<tr class='even'>";
+								$("#controlfilas").val('1');
+							}
+							else{
+								codigo = "<tr class='odd'>";
+								$("#controlfilas").val('0');
+							}
+							codigo += "<td class='sorting_1'>" + NumeroDeTuboCapturado + "</td>";
+							// Wojciech Modifico Aqui
+							
+							codigo += "			<td>" + LoteGlobal+pad(FolioGlobal+1,3) + "</td>";
+							FolioGlobal = FolioGlobal + 1;
+							codigo += "			<td>" + " -------- " + "</td>"; 
+							codigo += "			<td>" + " " + "</td>";
+							codigo += "			<td>" + "Solicitando a LIS <img src='imagenes/loader.gif' style='margin-top: -7px;'>" + "</td>";
+							codigo += "		</tr>";
+							
+							<!-- var astm = colocarEstudios(NumeroDeTuboCapturado); -->
+							<!-- if (astm === '') astm = codigo; -->
+							var varNombre= '';
+							//---- Simular información
+							<!-- var varNombre = obtenPacienteAleatorio(Math.floor((Math.random() * 20))); -->
+							//var varNombre = 
+							AgregarMVCTubo(NumeroDeTuboCapturado, LoteGlobal.substring(0,2), LoteGlobal.substring(2,5), pad(FolioGlobal,3), varNombre, 'En Captura', 'Agregado');							
+							<!-- var varEstudios = obtenEstudiosAleatorios(); -->
+							<!-- codigo += "			<td>" + varNombre + "</td>"; -->
+							<!-- codigo += "			<td>" + varEstudios + "</td>";							 -->
+							// termina modificacion
+							<!-- if($('#lisIco').css('display') !== 'none') -->
+								<!-- codigo += "			<td>" + "En Captura" + "</td>"; -->
+							<!-- else { -->
+								<!-- codigo += "			<td>" + "Solicitando a LIS" + "</td>"; -->
+								EnviaPeticionLIS(NumeroDeTuboCapturado,LoteGlobal+pad(FolioGlobal,3));
+							<!-- } -->
+							<!-- codigo += "		</tr>"; -->
+							<!-- codigo += "</tr>"; -->
+							
+							$('#tubosDeLote tbody').prepend(codigo);							
+							
+							setTimeout(function(){ 
+								var estadochecar = $('table#tubosDeLote td:contains("' + NumeroDeTuboCapturado + '")').parent().find("td:nth-child(5)").html();
+								if(!estadochecar.includes('Recibido por LIS') )
+									$('table#tubosDeLote td:contains("' + NumeroDeTuboCapturado + '")').parent().find("td:nth-child(5)").html("Error de solicitud al LIS");
+							}, 5000);
+							
+							<!-- EnviaPeticionLIS(); -->
+							
+							<!-- $('#cerrarCapturaNuevoRegistro').trigger('click'); -->
+							$('#capturaNumeroDeTubo').val('');
+							$('#CapturaPaciente').val('');
+							$("#capturaNumeroDeTubo").focus();
+						}
+						else alert("Número de tubo es un campo obligatorio");
+					}
+					//---- si ya existe un registro para ese tubo
+					else{
+						//---- poner el tubo en modo edición
+						fila.trigger('click');
+						$('#capturaNumeroDeTubo').val('');
+					}
+					$('#capturaNumeroDeTubo').focus();
+				});
+				
+				$('#capturaNumeroDeTubo').keyup(function (event) {
+					if (event.which == 13) {
+						event.preventDefault();
+						$('#agregarNuevoTubo #AceptarNuevoTubo').trigger('click');
+					}
+				});
+				
+				$('html').on('click', '.cerrarAlgo', function () {
+					$(this).parent().hide('slow');
+					$('.overlay').fadeOut();
+				});
+				
+				$('html').on('click', '#agregados .itemTubo', function () {
+					//---- quitar de la lista en el panel de orden
+					$(this).remove();
+					//---- quitar de la lista en la table
+					var listaEstudios = "";
+					var numeroTubo = $('.numeroDeLote_panelDeOrden').text();
+					var estudiosAgregados = $('#agregados .itemTubo').clone();//.removeClass('listItem').removeClass('itemTubo')
+					var codigo = "";
+					for(var i in estudiosAgregados){
+						if(estudiosAgregados[i].innerHTML !== undefined){
+							codigo += " <span class='estudio'>" + estudiosAgregados[i].innerHTML + "</span>";
+							listaEstudios += estudiosAgregados[i].innerHTML + " ";
+						}
+					}
+					codigo = codigo.replace(" ", "");
+					$('table#tubosDeLote td:contains("' + numeroTubo + '")').parent().find("td:last").prev().html(codigo);
+					$('.estudios_panelDeOrden').text(listaEstudios);
+				});
+				
+				$('html').on('click', '#finalLote', function () {
+					<!-- si el lote no está finalizado -->
+					if($(this).text() !== 'Enviado a maquilador'){
+						// Modificacion por wojciech
+						guardaLote(LoteGlobal.substring(0,2),LoteGlobal.substring(2,5),"Enviado a maquilador");
+						// Termina modificacion
+						ocultarEdicionDeLote();
+						$('.panelDeOrden').hide();
+						var loteSeleccionado = $('#loteSeleccionado').text();
+						$('#tablaLotes tr td:contains("' + loteSeleccionado + '")').next().text('Enviado a maquilador');
+						
+						
+						var table, tr, td, i;
+						  table = document.getElementById("tubosDeLote");
+						  tr = table.getElementsByTagName("tr");
+
+						  
+						  for (i = 0; i < tr.length; i++) {
+							td = tr[i].getElementsByTagName("td")[4];
+							if (td) {
+							  td.innerHTML = "Enviado a maquilador";
+							} 
+						  }
+						  
+						  
+						  var idUnidad = $('#loteSeleccionado').text().substring(0,2);
+						  var idlote = $('#loteSeleccionado').text().substring(2,5);
+						  AjaxMaquilador(idUnidad,idlote);
+						imprimeLote();
+					}
+					
+				});
+				
+				$('html').on('click', '.paciente_panelDeOrden', function () {
+					var panelDeOrden = '#' + $(this).parents().eq(2).prop('id') + ' ';
+					$(panelDeOrden + '#capturarNombre').val($(this).text());
+					$(this).hide();
+					$(panelDeOrden + '#capturarNombre').show();
+					$(panelDeOrden + '#aceptarCambioNombre').show();
+					$('#lecturaContinuaTubos').val(0);
+					$(panelDeOrden + '#capturarNombre').focus();
+				});
+				$('html').on('click', '#aceptarCambioNombre', function () {
+				/** Pendiente, al editar nombre, el textbox se habilita en otro panel **/
+					var idPanel = '#' + $(this).parents().eq(2).prop('id');
+					var numeroTubo = $(idPanel + ' .numeroDeLote_panelDeOrden').text();
+					$(idPanel + ' .paciente_panelDeOrden').text($(idPanel + ' #capturarNombre').val());
+					$(idPanel +' .paciente_panelDeOrden').show();
+					$(idPanel +' #capturarNombre').hide();
+					$(idPanel +' #aceptarCambioNombre').hide();
+					
+					var nuevoNombre = $(idPanel + ' #capturarNombre').val();
+					$('table#tubosDeLote td:contains("' + numeroTubo + '")').parent().find("td:nth-child(3)").html(nuevoNombre);
+					$('#aceptarCambioNombre').val('1')
+				});
+				
+				$('html').on('click', '#eliminarTubo', function () {
+					var panelDeOrden = '#' + $(this).parent().parent().prop('id') + ' ';
+					<!-- var panelDeOrden = $(this).parent().parent(); -->
+					// Modificacion por wojciech
+					//"panelDeOrden-FU101001_1509174805"
+					EliminaMVCTubo( LoteGlobal.substring(0,2), LoteGlobal.substring(2,5), panelDeOrden.substring(19,22) );
+					// Termina modificacion	
+					$('#TuboAquitar').text($(panelDeOrden + '.numeroDeLote_panelDeOrden').text());
+					$('#ConfirmarQuitarTubo').show('slow');
+					$('.overlay').fadeIn();
+				});
+				
+				$('html').on('click', '#BtnConfirmarQuitarTubo', function () {
+					var numeroTubo = $('#TuboAquitar').text();
+					$('table#tubosDeLote td:contains("' + numeroTubo + '")').parent().hide().remove();
+					$('#cerrarQuitarTubo').trigger('click');
+					
+					$('#cerrarPanelDeOrden').trigger('click');
+				});
+				
+				/******************/
+				$('.cog').sideNav('show');
+
+				$('.cog').sideNav({
+					menuWidth: 300, // Default is 300
+					edge: 'left', // Choose the horizontal origin
+					closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
+					draggable: true, // Choose whether you can drag to open on touch screens,
+
+				});
+					
+				<!-- $('html').on('click', '#regresarALotes', function () { -->
+				$('#btnregresarALotes').click(function (){
+					
+					if(VerificaCambios()){
+						$('#PreguntaGuardar').show('slow');
+						$('.overlay').fadeIn();
+					}
+					else{
+						$('#tubosPorLote').fadeOut();
+						$('#listadoDeLotes').fadeIn();
+					}
+				});
+					
+				$('html').on('click', '#aceptarPreguntaGuardar', function () {
+					$('#PreguntaGuardar').hide('slow');
+					$('.overlay').fadeOut();
+				});
+				
+				$('html').on('click', '#BtnSalirSinGuardar', function () {
+					//----descartar cambios en arreglo global
+					sessionStorage.setItem('loginDirecto', true);
+					MVCLotes = [];
+					location.reload();
+					$('#PreguntaGuardar').hide('slow');
+					$('.overlay').fadeOut();
+					$('#loginFallo').hide();
+					
+					$('#tubosPorLote').hide('slow');
+					$('#listadoDeLotes').fadeIn();
+				});
+					
+				$('html').on('click', '#BtnGuardarSalir', function () {
+					guardaLote(LoteGlobal.substring(0,2),LoteGlobal.substring(2,5),"En Captura");
+					$('#PreguntaGuardar').hide('slow');
+					$('.overlay').fadeOut();
+					
+					$('#tubosPorLote').hide('slow');
+					$('#listadoDeLotes').fadeIn();
+				});
+					
+				$('html').on('click', '#btnMostrarBusquedaAvanzada', function () {
+					if($('#listadoDeLotes').css('display') !== 'none'){
+						//----filtro de lotes
+						$('#estatusBusquedaAvanzada').show();
+						$('#lblEstatusBusquedaAvanzada').show();
+						$('#estudiosBusquedaAvanzada').hide();
+						$('#lblEstudiosBusquedaAvanzada').hide();
+						$('#divFiltroFecha').show();
+					}
+					else if($('#tubosPorLote').css('display') !== 'none'){
+						//---- filtro de tubos
+						$('#estatusBusquedaAvanzada').hide();
+						$('#lblEstatusBusquedaAvanzada').hide();
+						$('#estudiosBusquedaAvanzada').show();
+						$('#lblEstudiosBusquedaAvanzada').show();
+						$('#divFiltroFecha').hide();
+					}
+				
+					$('#busquedaAvanzadaDiv').slideToggle();
+					$('.overlay').fadeToggle();
+				});
+				
+				$('html').on('click', '#titulo', function () {
+					if($('#loginDiv').css('display') === 'none'){
+						$(this).hide();
+						$('#txtBusquedaSimple').show().focus();
+						$('#btnCerrarBusquedaSimple').show();
+					}
+				});
+				
+				$('html').on('focus', '#txtBusquedaSimple', function () {
+					$('#lecturaContinuaTubos').val('0');
+				});
+				
+				$('html').on('blur', '#txtBusquedaSimple', function () {
+					$('#lecturaContinuaTubos').val('1');
+					$('#CapturaNombreLote').focus();
+				});
+				
+				$('html').on('click', '#btnCerrarBusquedaSimple', function () {
+					$("#tablaLotes tbody tr").show();
+					$("#tubosDeLote tbody tr").show();
+					
+					$('#btnCerrarBusquedaSimple').hide();
+					$('#txtBusquedaSimple').hide();
+					$('#titulo').show();
+					$('#txtBusquedaSimple').val('');
+				});
+				
+				$('html').on('click', '#btnSalir', function () {
+					$('.overlay').fadeIn(500);
+					$('#busquedaAvanzadaDiv').hide();
+					$('#btnConfiguracion').hide();
+					
+					$('#titulo').show();
+					$('#txtBusquedaSimple').hide();
+					
+					$('#listadoDeLotes').hide('slow');
+					$('#tubosPorLote').hide('slow');
+					$('#loginDiv').fadeIn();
+					$('.form').fadeIn();
+					$('.wrapper').removeClass('form-success');
+				});
+					
+				$('.collapsible').collapsible();
+				
+				$('html').on('click', '#verCargador', function () {
+					$('#Cargando').show('slow');
+					$('.overlay2').fadeIn();
+				
+					setTimeout(function(){
+						$('#Cargando').hide();
+						$('.overlay2').fadeOut();
+					}, 2500)
+					
+				});
+				
+				$('html').on('click', '#SimularConexion', function () {
+					$('#ConSenalIcono').toggle();
+					$('#SinSenalIcono').toggle();
+				});
+				
+				$('html').on('click', '#btnBusquedaAvanzada', function () {
+					$('#Cargando').show('slow');
+					$('.overlay2').fadeIn();
+					//---- Mostrar todas las filas
+					$("#tablaLotes tbody tr").show();
+					$("#tubosDeLote tbody tr").show();
+					
+					var res = 0;
+					var table, tr, td, i;
+					if($('#listadoDeLotes').css('display') !== 'none'){
+						//---- obteniendo estados de lotes a filtrar
+						var listaEstatusBusquedaAvanzada = "#select-options-" + $('#cmbEstatusBusquedaAvanzada').attr('data-select-id');
+						var listaSeleccionadoObj = $(listaEstatusBusquedaAvanzada + " li.active");
+						var listaEstatusSeleccionados = [];
+						for(var i in listaSeleccionadoObj){
+							var estado = listaSeleccionadoObj[i].innerText;
+							if(typeof estado === "undefined")
+								break;
+							listaEstatusSeleccionados.push(estado)
+						}
+						table = document.getElementById("tablaLotes");
+					}
+					else if($('#tubosPorLote').css('display') !== 'none'){
+						//---- obteniendo estudios de tubos a filtrar
+						var listaEstudiosBusquedaAvanzada = "#select-options-" + $('#cmbEstudiosBusquedaAvanzada').attr('data-select-id');
+						var listaSeleccionadoEstudiosObj = $(listaEstudiosBusquedaAvanzada + " li.active");
+						var listaEstudiosSeleccionados = [];
+						for(var i in listaSeleccionadoEstudiosObj){
+							var estado = listaSeleccionadoEstudiosObj[i].innerText;
+							if(typeof estado === "undefined")
+								break;
+							listaEstudiosSeleccionados.push(estado)
+						}
+						table = document.getElementById("tubosDeLote");
+					}
+				
+					$('#btnCerrarBusquedaSimple').show();
+					
+					
+					tr = table.getElementsByTagName("tr");
+					
+					//---- recorrer registros para ocultar los que no cumplan con los criterios
+					for (i = 0; i < tr.length; i++) {
+						//filtros de lotes
+						if($('#listadoDeLotes').css('display') !== 'none'){
+							//---- Revisar si cumple con el criterio Fecha
+							td = tr[i].getElementsByTagName("td")[0];
+							if (td) {
+								var fechaTexto = (td.innerHTML.split(' ')[0]).split('-');
+								var fechaDelRegistro = new Date( fechaTexto );
+								
+								if( $('#RangoInicio').val() != ""){
+									var fechaInicial = new Date( $('#RangoInicio').val() );
+								}
+								else{ 
+									var fechaInicial = new Date();
+									var x = fechaInicial.getFullYear() + "/" + fechaInicial.getMonth() + "/01";//fechaInicial.getDate();
+									$('#RangoInicio').val(x);
+								}
+								
+								if( $('#RangoFin').val() != ""){
+									var fechaFinal = new Date( $('#RangoFin').val() );
+								}
+								else{ 
+									var fechaFinal = new Date();
+									var x = fechaFinal.getFullYear() + "/" + fechaFinal.getMonth() + "/" +  fechaFinal.getDate();
+									$('#RangoFin').val(x);
+								}
+								
+								
+									
+								if (fechaDelRegistro >= fechaInicial && fechaDelRegistro <= fechaFinal) {
+									<!-- tr[i].style.display = ""; -->
+									
+								} 
+								else {
+									tr[i].style.display = "none";
+									continue;
+								}
+							} 
+							//---- Revisar si cumple con el Estatus
+							td = tr[i].getElementsByTagName("td")[2];
+							if (td) {
+								if(listaEstatusSeleccionados.length > 0){
+									var estadoRegistro = (td.innerText).trim().toLowerCase();
+									var bandera = false;
+									tr[i].style.display = "none";//ocultar fila
+									for(var x in listaEstatusSeleccionados){
+										if(listaEstatusSeleccionados[x].trim().toLowerCase() === estadoRegistro){
+											tr[i].style.display = ""; // se muestra otra vez la fila, si tiene el estatus buscado
+											break;
+										}
+									}
+								}
+							}
+						
+						}
+						else if($('#tubosPorLote').css('display') !== 'none'){
+							//filtros de tubos
+							//---- Revisar si cumple con el Estatus
+							td = tr[i].getElementsByTagName("td")[3];
+							if (td) {
+								if(listaEstudiosSeleccionados.length > 0){
+									var estudiosRegistro = (td.innerText).trim().toLowerCase();
+									var bandera = false;
+									tr[i].style.display = "none";//ocultar fila
+									for(var x in listaEstudiosSeleccionados){
+										if(estudiosRegistro.includes( listaEstudiosSeleccionados[x].trim().toLowerCase() )){
+											tr[i].style.display = ""; // se muestra otra vez la fila, si tiene el estatus buscado
+											break;
+										}
+									}
+								}
+							}
+						
+						}
+						res++;
+					}
+				
+					listaSeleccionado = undefined;
+
+					<!-- setTimeout(function(){ -->
+						$('#Cargando').hide();
+						$('.overlay2').fadeOut();
+						if(res == 0)
+							$('#BusquedaSinResultados').fadeIn();
+						else $('#BusquedaSinResultados').fadeOut();
+					<!-- }, 2500) -->
+					
+				});
+				
+				$('html').on('click', '#busquedaUltimoMes', function () {
+					if($('.rangoFechasDiv').css('display') === 'none'){
+						$('.rangoFechasDiv').css('display' ,'inline-block');
+					}
+					else {
+						$('.rangoFechasDiv').css('display' ,'none');
+					}
+					$('#RangoInicio').val('');
+					$('#RangoFin').val('');
+				});
+				
+				  $('.datepicker').pickadate({
+					selectMonths: true, // Creates a dropdown to control month
+					selectYears: 1, // Creates a dropdown of 15 years to control year,
+					today: 'Hoy',
+					clear: 'Limpiar',
+					close: 'Ok',
+					closeOnSelect: false, // Close upon selecting a date,
+					firstDay: true,
+					format: 'yyyy/mm/dd',
+					max: new Date(),
+				  });
+				
+				$('select').material_select();
+				
+				$('html').on('click', '#btnImprimeLote', function () {
+					var codigoEnviar = $('#tubosDeLote tbody').html().replace(/	/g, '');
+
+					<!-- imprimeLote($('#tubosDeLote tbody').html().replace(/	/g, '')); -->
+					imprimeLote();
+				});
+				
+				$('html').on('click', '#btnGuardaLote', function () {
+					var codigoEnviar = $('#tubosDeLote tbody').html().replace(/	/g, '');
+					// Modificacion por wojciech
+					guardaLote(LoteGlobal.substring(0,2),LoteGlobal.substring(2,5),"En Captura");
+					// Termina modificacion
+					alert('Datos Guardados')
+				});
+				
+				$('html').on('click', '#SimularConexionLis', function () {
+					$('#lisIco').toggle();
+				});
+				
+				$('html').on('click', '#btnOkTiempos', function () {
+					<!-- alert("inicia") -->
+					tiempoActualizar = parseInt($('#txtTiempoActualizacionLis').val());
+					TiempoEspera = parseInt($('#txtTiempoRespuestaLis').val());
+					
+					if(tiempoActualizar == 0 || tiempoActualizar == "" || isNaN(tiempoActualizar))
+						tiempoActualizar = 180000;
+					if(TiempoEspera == 0 || TiempoEspera == "" || isNaN(TiempoEspera))
+						TiempoEspera = 3000;
+						
+					<!-- alert("termina") -->
+				});
+				
+				//---- Scroll
+				$(function(){
+				  var curDown = false,
+					  curYPos = 0,
+					  curXPos = 0;
+				  $(window).mousemove(function(m){
+					if(curDown === true){
+					 $(window).scrollTop($(window).scrollTop() + (curYPos - m.pageY)); 
+					 $(window).scrollLeft($(window).scrollLeft() + (curXPos - m.pageX));
+					}
+				  });
+				  
+				  $(window).mousedown(function(m){
+					curDown = true;
+					curYPos = m.pageY;
+					curXPos = m.pageX;
+				  });
+				  
+				  $(window).mouseup(function(){
+					curDown = false;
+				  });
+				})
+				
+				Date.prototype.addDays = function(days) {
+				  var dat = new Date(this.valueOf());
+				  dat.setDate(dat.getDate() + days);
+				  return dat;
+				}
+				
+				/************ Teclado virtual************/ 
+				$('html').on('blur', 'input[type="text"],input[type="password"]', function () {
+					$('#textoTeclado').val($(this).attr('paraTeclado'));
+					<!-- setTimeout(function(){ $('.keyboard').hide(); }, 300); -->
+					
+				});
+				$('.keyboard-button').click(function(){
+					var teclaEspecial = $(this).attr('teclaEspecial');
+					var textboxEscribir = $('#textoTeclado').val();
+					if(typeof teclaEspecial === "undefined"){
+						var letraInsertar =  $(this).text();
+						if($(this).hasClass('enMayusculas'))
+							letraInsertar = letraInsertar.toUpperCase();
+						var valor = $('input[paraTeclado="' + textboxEscribir + '"]').val();
+						<!-- $('input[paraTeclado="' + textboxEscribir + '"]').val(valor + $(this).text()); -->
+						$('input[paraTeclado="' + textboxEscribir + '"]').insertAtCaret( letraInsertar );
+					}
+					else{
+						if(teclaEspecial === 'borrar'){
+							<!-- var borrar = String.fromCharCode(08) -->
+							$('input[paraTeclado="' + textboxEscribir + '"]').backspaceAtCaret();
+							<!-- backspaceAtCursor(); -->
+						}
+						else if(teclaEspecial === 'shift'){
+							$('.keyboard-button').toggleClass('enMayusculas');
+						}
+						<!-- else if(teclaEspecial === 'enter'){						 -->
+							<!-- <!-- var e = jQuery.Event("keypress"); --> -->
+							<!-- <!-- e.which = 13; //choose the one you want --> -->
+							<!-- <!-- e.keyCode = 13; --> -->
+							<!-- <!-- $('input[paraTeclado="' + textboxEscribir + '"]').focus(); --> -->
+							<!-- <!-- $('input[paraTeclado="' + textboxEscribir + '"]').trigger(e); --> -->
+							
+							<!-- var e = jQuery.Event("keydown"); -->
+							<!-- e.which = 13; // Enter -->
+							<!-- <!-- $("input").trigger(e); --> -->
+							<!-- <!-- $('input[paraTeclado="' + textboxEscribir + '"]').trigger(e); --> -->
+							<!-- var textbox = $('input[paraTeclado="' + textboxEscribir + '"]').attr('id'); -->
+							
+							<!-- $('#').trigger(e); -->
+						<!-- } -->
+					}
+					if(textboxEscribir == "txtBusquedaSimple")
+						$('#txtBusquedaSimple').trigger('keyup');
+					$('input[paraTeclado="' +  + '"]').focus();
+				});
+				
+				$('html').on('click', '#ocultarTeclado', function () {
+					$('.keyboard').slideToggle( "slow" );
+					$('#divCredenciales').removeClass('subeTeclado');
+				});
+				
+				$('html').on('focus', 'input[type="text"]:not("#capturaNumeroDeTubo"):not(".select-dropdown"):not(".fecha"),input[type="password"]', function () {
+					$('.keyboard').show();
+					$('#divCredenciales').addClass('subeTeclado');
+				});
+				
+				$( 'input[type="text"]:not(".datepicker")' ).each(function() {
+					$(this).attr('parateclado',$(this).attr('id'));
+				});
+				
+				
+			});
+			
+			function mostrarCatalogoExamenes(){
+				$('#CatalogoExamenes').show('slow');
+				$('.overlay').fadeIn();
+			}
+			
+			function ocultarCatalogoExamenes(){
+				$('#CatalogoExamenes').hide('slow');
+				$('.overlay').fadeOut();
+			}
+			
+			function ocultarEdicionDeLote(){
+				$('#finalLote').text('Enviado a maquilador');
+				$('#editarTubo').hide();
+				$('#eliminarTubo').hide();
+				$('#agregarTuboALote').hide();
+				$('#panelDeOrden').hide("slide"); 
+				$('#btnGuardaLote').hide();
+				
+				$('#deternerLecturaContinua').hide();
+				$('#msgEsaneoContinuo').hide();
+				
+				<!-- Al estar finalizado el lote, se permite reimpresión-->
+				$('#btnImprimeLote').show();
+			}
+			
+			function mostrarEdicionDeLote(){
+				$('#finalLote').text('Enviar a maquilador');
+				<!-- $('#editarTubo').show(); -->
+				$('#eliminarTubo').show();
+				$('#agregarTuboALote').show();
+				<!-- $('#panelDeOrden').hide("slide");  -->
+				$('#btnGuardaLote').show();
+				$('#btnImprimeLote').hide();
+				<!-- $('#deternerLecturaContinua').show(); -->
+				<!-- $('#msgEsaneoContinuo').show(); -->
+				$('#agregarTuboALote').trigger('click');
+			}
+			
+			/** Teclado, insertar en posición del textbox**/
+			jQuery.fn.extend({
+				insertAtCaret: function(myValue){
+				  return this.each(function(i) {
+					if (document.selection) {
+					  //For browsers like Internet Explorer
+					  this.focus();
+					  var sel = document.selection.createRange();
+					  sel.text = myValue;
+					  this.focus();
+					}
+					else if (this.selectionStart || this.selectionStart == '0') {
+					  //For browsers like Firefox and Webkit based
+					  var startPos = this.selectionStart;
+					  var endPos = this.selectionEnd;
+					  var scrollTop = this.scrollTop;
+					  this.value = this.value.substring(0, startPos)+myValue+this.value.substring(endPos,this.value.length);
+					  this.focus();
+					  this.selectionStart = startPos + myValue.length;
+					  this.selectionEnd = startPos + myValue.length;
+					  this.scrollTop = scrollTop;
+					} else {
+					  this.value += myValue;
+					  this.focus();
+					}
+				  });
+				},
+				backspaceAtCaret: function(){
+				  return this.each(function(i) {
+					if (document.selection)
+					{
+						this.focus();
+						sel = document.selection.createRange();
+					if(sel.text.length > 0)
+					{
+						sel.text="";
+					}
+					else
+					{
+						sel.moveStart("character",-1);
+						sel.text="";
+					}
+						sel.select();
+					}
+					else if (this.selectionStart || this.selectionStart == "0")
+					{
+						var startPos = this.selectionStart;
+						var endPos = this.selectionEnd;
+						this.value = this.value.substring(0, startPos-1) + this.value.substring(endPos, this.value.length);
+						this.selectionStart = startPos-1;
+						this.selectionEnd = startPos-1;
+						this.focus();
+					}
+					else
+					{
+						this.value=this.value.substr(0,(this.value.length-1));
+						this.focus();
+					}
+				})
+}
+			});
+			
+			
+			function backspaceAtCursor()
+			{
+				var textboxEscribir = $('#textoTeclado').val();
+				field = document.getElementById(textboxEscribir);
+				if(field.selectionStart)
+				{
+					var startPos = field.selectionStart;
+					var endPos = field.selectionEnd;
+					if(field.selectionStart == field.selectionEnd)
+					{
+						field.value = field.value.substring(0, startPos - 1) + field.value.substring(endPos, field.value.length);
+						field.focus();
+						field.setSelectionRange(startPos - 1, startPos - 1);
+					}
+					else
+					{
+						field.value = field.value.substring(0, startPos) + field.value.substring(endPos, field.value.length);
+						field.focus();
+						field.setSelectionRange(startPos, startPos);
+					}
+				}
+			}
+			
+			
+			function filtrarTabla() {
+				if($('#listadoDeLotes').css('display') !== 'none'){
+					$("#tablaLotes tbody tr:not(:containsi('" + $('#txtBusquedaSimple').val() +"')),").hide();
+					$("#tablaLotes tbody tr:containsi('" + $('#txtBusquedaSimple').val() +"'),").show();
+				}
+				else if($('#tubosPorLote').css('display') !== 'none'){
+					$("#tubosDeLote tbody tr:not(:containsi('" + $('#txtBusquedaSimple').val() +"')),").hide();
+					$("#tubosDeLote tbody tr:containsi('" + $('#txtBusquedaSimple').val() +"'),").show();
+				}
+			}
+			//---- hacer que :contains no sea case sensitive
+			$.extend($.expr[':'], {
+			  'containsi': function(elem, i, match, array) {
+				return (elem.textContent || elem.innerText || '').toLowerCase()
+					.indexOf((match[3] || "").toLowerCase()) >= 0;
+			  }
+			});
+			
+			function GeneraTablaLote(condiciones){			
+				obtenLotes(condiciones);
+				
+			    var tablalotestexto = "";
+				var EstadoLoteNombre = "";		
+				var cantidad = lotes.length;
+				for ( var i = 0 ; i < cantidad ; i++ ) 
+				 {	
+					EstadoLoteNombre = "";					
+					tablalotestexto += "<tr><td>"+ lotes[i][0] + "</td><td>"+ lotes[i][1]  + "</td><td>" + lotes[i][2] + "</td></tr>";
+				}
+				
+				$('#tablaLotes tbody').html(tablalotestexto);
+				return true;				
+			}
+			
+			function GeneraTablaTubos(condiciones){			
+				obtenLote($('#loteSeleccionado').text());
+				
+			    var tablatubosTexto = "";
+				var EstadoTuboNombre = "";		
+				var cantidad = tubos.length;
+				var listaEstudiosMuestra = "";
+				var codigo = "";
+				for ( var i = 0 ; i < cantidad ; i++ ) 
+				 {	
+					listaEstudiosMuestra = tubos[i][3].split("~");
+					codigo = "";
+					for(var j = 0 ; j < listaEstudiosMuestra.length ; j++){
+						var x = listaEstudiosMuestra[j];
+						codigo +=  "<span class='estudio " + (x).replace(/ /g,'') + "'>" + x.replace(/ /g,'_') + "</span> "   
+					}
+					tablatubosTexto += "<tr><td>"+ tubos[i][0] + "</td><td>"+ tubos[i][1]  + "</td><td>" + tubos[i][2] + "</td><td>" + codigo + "</td><td>" + tubos[i][4] +"</td></tr>";
+				}
+				$('#tubosDeLote tbody').html('');
+				$('#tubosDeLote tbody').append(tablatubosTexto);
+				return true;				
+			}
+		</script>
+		
+		<style>
+			.caret{
+				display:none
+			}
+		</style>
+		
+		<script>
+	    var unidad;
+		var lotes;
+		var muestras;
+		var usuariologeado;
+		var permiso;
+		var MVCLotes;
+		var peticionesLIS;
+// MVCLotes = {'Fecha','FolioLote','Estado','Enviado'
+//{'Folio_LIS','FolioMaq','Nombre','Estado','Enviado'
+//{{'ES1','Enviado'},{'ES2','PGuardar'} } }
+		
+		var tubos;
+		function obtenUnidad(){
+			unidad = [
+				"ZZZ","SIN DEFINICION"
+			];	
+			$.ajax({
+				  async:false, 
+				  method: "POST",
+				  url: "php/ObtenerUnidad.php",
+				  dataType: "json"
+				}).done(function(data){					
+					  data.forEach(function(entry){
+						  unidad = [ entry.IdUnidad, entry.Nombre ];						  
+					   });						 
+					}).fail(function(error){					  
+						alert("Por el momento no esta disponible el servicio, intente m\u00E1s tarde");					  
+					});				
+			return true;
+		}
+		
+		function VerificaUsuario(usuarioinicio, contrasenainicio){ 			
+			var Acceso = false;
+			usuariologeado = [ 'INA','INA','-1' ];
+			var Usuario = usuarioinicio;
+			var Contrasena = contrasenainicio;
+			$.ajax({
+				  async:false, 
+				  method: "GET",
+				  url: "php/VerificarIdentidad.php?Usuario="+Usuario+"&Contrasena="+Contrasena,
+				  dataType: "json",				  
+				}).done(function(data){					
+					  data.forEach(function(entry){
+						  permiso = [ entry.Editable ];						  
+						  Acceso = true;						  
+					   });						 
+					}).fail(function(error){					  
+						alert("Por el momento no esta disponible el servicio, intente m\u00E1s tarde");					  
+					});
+			if ( Acceso )
+			{
+				usuariologeado = [ 'usuarioinicio','contrasenainicio',permiso ];
+				return true;
+			}			 
+			return false;
+		}
+		
+		function obtenLotes(condiciones){
+			MVCLotes = typeof(MVCLotes) == "undefined"? [] : MVCLotes;
+		    lotes = [];	
+			var loteunico;
+			$.ajax({
+				  async:false, 
+				  method: "GET",
+				  url: "php/ObtenerLotes.php?Condiciones="+condiciones,
+				  dataType: "json",				  
+				}).done(function(data){					
+					  data.forEach(function(entry){						  
+						  loteunico = [ entry.Fecha, entry.IdUnidad + entry.IdLote, entry.Estado ];						  
+					      lotes.push(loteunico);		
+						  var MVCLote = [ entry.Fecha, entry.IdUnidad , entry.IdLote, entry.Estado, [] , 'Enviado' ];
+						  MVCLotes.push(MVCLote);						  
+					   });						 
+					}).fail(function(error){					  
+						alert("Por el momento no esta disponible el servicio, intente m\u00E1s tarde");					  
+					});
+			return true;			
+		}
+		
+		function guardaLote(varIdUnidad, varIdLote, vEstado){
+			var varEstado = "1";
+			if ( vEstado == "En Captura" )
+			{
+				varEstado = "10";				
+			} else {
+				varEstado = "20";
+			}
+			var posicionlote;
+			var lote = "";
+			for ( var mvclote in MVCLotes )
+			{
+				if ( MVCLotes[mvclote][1] == varIdUnidad && MVCLotes[mvclote][2] == varIdLote )
+				{
+					posicionlote = mvclote;
+					break;
+				}				
+			}			
+			for ( var mvctubo in MVCLotes[posicionlote][4] )
+			{
+				if ( MVCLotes[posicionlote][4][mvctubo][5] == 'Agregado' || MVCLotes[posicionlote][4][mvctubo][5] == 'Editado' || MVCLotes[posicionlote][4][mvctubo][5] == 'Enviado' )
+				{
+					lote += "~" +  MVCLotes[posicionlote][4][mvctubo][0] + "," + varIdUnidad + varIdLote + MVCLotes[posicionlote][4][mvctubo][1] + "," ;
+					lote += MVCLotes[posicionlote][4][mvctubo][2] + "," ;
+					for ( var mvcestudio in MVCLotes[posicionlote][4][mvctubo][4] )
+					{
+						if ( MVCLotes[posicionlote][4][mvctubo][4][mvcestudio][1] == 'Agregado' || MVCLotes[posicionlote][4][mvctubo][4][mvcestudio][1] == 'Editado' || MVCLotes[posicionlote][4][mvctubo][4][mvcestudio][1] == 'Enviado' )
+						{
+							lote += "!" + MVCLotes[posicionlote][4][mvctubo][4][mvcestudio][0];
+						}
+					}
+					lote += "," +  MVCLotes[posicionlote][4][mvctubo][5];
+				}
+			}
+			var Resultado = false;
+			console.log(lote);			
+			//alert(lote);
+			// data: { Lote: lotec },
+			$.ajax({
+				  async:false, 
+				  method: "GET",
+				  url: "php/GuardaLote.php?Lote="+lote+"&Estado="+varEstado,
+				  dataType: "json",										  
+				}).done(function(dataex){					
+					  if ( dataex === "1" )
+						Resultado = true;
+					  else
+						Resultado = false;						 					  
+					}).fail(function(error){					  
+						alert("Por el momento no esta disponible el servicio, intente m\u00E1s tarde");					  
+					});
+			if ( Resultado )
+			{
+				MVCLotes[posicionlote][5] = 'Enviado';
+				for ( var mvctubo in MVCLotes[posicionlote][4] )
+				{
+					if ( MVCLotes[posicionlote][4][mvctubo][5] == 'Borrado' )
+					{
+						MVCLotes[posicionlote][4][mvctubo][5] = 'EnviadoB';
+					}else
+					{
+						MVCLotes[posicionlote][4][mvctubo][5] = 'Enviado';
+					}
+					for ( var mvcestudio in MVCLotes[posicionlote][4][mvctubo][4] )
+					{
+						if ( MVCLotes[posicionlote][4][mvctubo][4][mvcestudio][1] == 'Borrado' )
+						{
+							MVCLotes[posicionlote][4][mvctubo][4][mvcestudio][1] = 'EnviadoB';
+						} else
+						{
+							MVCLotes[posicionlote][4][mvctubo][4][mvcestudio][1] = 'Enviado';
+						}
+					}					
+				}
+			}
+			return Resultado;
+		}
+						
+		function AgregarMVCTubo(mvcFolio_LIS, mvcIdUnidad, mvcIdLote, mvcIdFolio, mvcNombre, mvcEstado, mvcBaseDatos){
+			// Recorro MVCLotes
+			var bandera = false;
+			var ELEMENTOTUBO = [ mvcFolio_LIS, mvcIdFolio, mvcNombre, mvcEstado, [] ,mvcBaseDatos ];			
+			for(var mvclote in MVCLotes)
+			{			
+				if ( MVCLotes[mvclote][1] == mvcIdUnidad && MVCLotes[mvclote][2] == mvcIdLote )
+				{
+				    for (var mvctubo in MVCLotes[mvclote][4]){
+						if ( MVCLotes[mvclote][4][mvctubo][1] == mvcIdFolio )
+						{
+							//if ( MVCLotes[mvclote][4][mvctubo][5] == 'Borrado' ){
+							  MVCLotes[mvclote][4][mvctubo][5] = mvcBaseDatos;							
+							  MVCLotes[mvclote][4][mvctubo][0] = mvcFolio_LIS;
+							  MVCLotes[mvclote][4][mvctubo][2] = mvcNombre;
+							  MVCLotes[mvclote][4][mvctubo][3] = mvcEstado;
+							//}
+							<!-- return true; -->
+							<!-- MVCLotes[mvclote][4].push( ELEMENTOTUBO ); -->
+							bandera = true;
+						}
+					}			
+					
+					if(typeof(mvctubo) == "undefined" && bandera == false){
+					MVCLotes[mvclote][4].push([]);
+													
+					  MVCLotes[mvclote][4][0].push(mvcFolio_LIS);
+					  MVCLotes[mvclote][4][0].push(mvcIdUnidad + mvcIdLote + mvcIdFolio);
+					  MVCLotes[mvclote][4][0].push(mvcNombre);
+					  MVCLotes[mvclote][4][0].push(mvcEstado);
+					  MVCLotes[mvclote][4][0].push([]);
+					  MVCLotes[mvclote][4][0].push(mvcBaseDatos);
+					  bandera = true;
+					}
+					else{
+						MVCLotes[mvclote][4].push( ELEMENTOTUBO );
+					}
+					<!-- MVCLotes[mvclote][4].push( ELEMENTOTUBO ); -->
+					<!-- return true; -->
+					return bandera;
+				}
+			}
+			return false;
+		}
+				
+		function AgregarMVCEstudio(mvcIdUnidad, mvcIdLote, mvcIdFolio, mvcAbreviatura, mvcBaseDatos){
+			// Recorro MVCLotes
+			ELEMENTOESTUDIO = [ mvcAbreviatura, mvcBaseDatos ]
+			var x = 0;
+			for(var mvclote in MVCLotes)
+			{
+				if ( MVCLotes[mvclote][1] == mvcIdUnidad && MVCLotes[mvclote][2] == mvcIdLote )
+				{
+					<!-- if(mvcBaseDatos != "Agregado"){ -->
+
+						for (var mvctubo in MVCLotes[mvclote][4]){
+							if ( MVCLotes[mvclote][4][mvctubo][1] == mvcIdFolio )
+							{							
+									for (var mvcestudio in MVCLotes[mvclote][4][mvctubo][4] )
+									{
+										if ( MVCLotes[mvclote][4][mvctubo][4][mvcestudio][0] == mvcAbreviatura ){
+											//if ( MVCLotes[mvclote][4][mvctubo][4][mvcestudio][1] == "Borrado" ){
+												MVCLotes[mvclote][4][mvctubo][4][mvcestudio][1] = mvcBaseDatos;
+											//}
+											<!-- return true; -->
+											x = mvcestudio;
+											<!-- MVCLotes[mvclote][4][x][4].push(ELEMENTOESTUDIO); -->
+										}								
+									}
+								
+							}
+						}
+						
+						if(typeof(MVCLotes[mvclote][4][x][4])== "undefined"){
+							MVCLotes[mvclote][4].push([]);
+															
+							  MVCLotes[mvclote][4][0].push(mvcFolio_LIS);
+							  MVCLotes[mvclote][4][0].push(mvcIdUnidad + mvcIdLote + mvcIdFolio);
+							  MVCLotes[mvclote][4][0].push(mvcNombre);
+							  MVCLotes[mvclote][4][0].push(mvcEstado);
+							  MVCLotes[mvclote][4][0].push([]);
+							  MVCLotes[mvclote][4][0].push(mvcBaseDatos);
+							}
+						else{
+							MVCLotes[mvclote][4][x][4].push(ELEMENTOESTUDIO);
+						}
+						
+						
+						
+								return true;
+					<!-- } -->
+					<!-- else{ -->
+						<!-- MVCLotes[mvclote][4][mvctubo][4].push(ELEMENTOESTUDIO); -->
+						<!-- return true; -->
+					<!-- } -->
+				}
+			}
+			return false;
+		}
+		
+		function EliminaMVCTubo(mvcIdUnidad, mvcIdLote, mvcIdFolio){
+			for(var mvclote in MVCLotes)
+			{			
+				if ( MVCLotes[mvclote][1] == mvcIdUnidad && MVCLotes[mvclote][2] == mvcIdLote )
+				{
+				    for (var mvctubo in MVCLotes[mvclote][4]){
+						if ( MVCLotes[mvclote][4][mvctubo][1] == mvcIdFolio )
+						{
+							for (var mvcestudio in MVCLotes[mvclote][4][mvctubo][4] )
+							{
+								MVCLotes[mvclote][4][mvctubo][4][mvcestudio][1] = 'Borrado';
+							}		
+							MVCLotes[mvclote][4][mvctubo][5] = 'Borrado';
+							return true;
+						}
+					}				
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		function EliminaMVCEstudio(mvcIdUnidad, mvcIdLote, mvcIdFolio, mvcAbreviatura ){
+			for(var mvclote in MVCLotes)
+			{
+				if ( MVCLotes[mvclote][1] == mvcIdUnidad && MVCLotes[mvclote][2] == mvcIdLote )
+				{
+					for (var mvctubo in MVCLotes[mvclote][4]){
+						if ( MVCLotes[mvclote][4][mvctubo][1] == mvcIdFolio )
+						{
+							for (var mvcestudio in MVCLotes[mvclote][4][mvctubo][4] )
+							{
+								if ( MVCLotes[mvclote][4][mvctubo][4][mvcestudio][0] == mvcAbreviatura ){
+									MVCLotes[mvclote][4][mvctubo][4][mvcestudio][1] = 'Borrado';
+									return true;
+								}								
+							}							
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+		
+		function VerificaCambios(){
+			var varIdUnidad = LoteGlobal.substring(0,2);
+			var varIdLote = LoteGlobal.substring(2,5);
+			var Basura = "1";
+			for(var mvclote in MVCLotes)
+				{
+
+				if ( MVCLotes[mvclote][1] == varIdUnidad && MVCLotes[mvclote][2] == varIdLote )
+					{
+						if ( MVCLotes[mvclote][5] == 'Enviado' || MVCLotes[mvclote][5] == 'EnviadoB' ){
+							for (var mvctubo in MVCLotes[mvclote][4]){
+								if ( MVCLotes[mvclote][4][mvctubo][5] == 'Enviado' || MVCLotes[mvclote][4][mvctubo][5] == 'EnviadoB' ) {
+									for (var mvcestudio in MVCLotes[mvclote][4][mvctubo][4] )
+									{
+										if ( MVCLotes[mvclote][4][mvctubo][4][mvcestudio][1] == "Enviado" || MVCLotes[mvclote][4][mvctubo][4][mvcestudio][1] == "EnviadoB" ){
+											var Basura = "1";
+										} else {
+											return true;
+										}
+									}
+								} else {
+									return true;
+								}								
+							}
+						} else {
+							return true;
+						}
+					}
+				}
+			return false;
+		}
+		/*function CompactarMVC(){
+			for(var mvclote in MVCLotes)
+			{
+				
+				for (var mvctubo in MVCLotes[mvclote][4]){
+					if ( MVCLotes[mvclote][4][5] = 'Borrado' )
+					{
+						// Tengo que removerlo
+					} else
+					{
+						for (var mvcestudio in MVCLotes[mvclote][4][mvctubo][4] )
+						{
+							if ( MVCLotes[mvclote][4][mvctubo][4][mvcestudio][1] == 'Borrado' )
+							{
+							
+							}						
+						}
+					}
+				}
+			}
+			MVCLotes = MVCLotesCopia;
+		}*/
+		
+		function obtenLote(lote){
+		LoteGlobal = lote;		
+		FolioGlobal = 0;
+			tubos = [];
+			var tuboUnico;
+			$.ajax({
+				  async:false, 
+				  method: "GET",
+				  url: "php/ObtenLote.php?Lote="+lote,
+				  dataType: "json",				  
+				}).done(function(data){						
+					var Entre = false;
+					var FolioAnterior = "";
+					  data.forEach(function(entry){						  
+						var FolioAnexando = entry.IdUnidad + entry.IdLote + entry.IdFolio
+						if ( parseInt(entry.IdFolio) > FolioGlobal )
+						{
+							FolioGlobal = parseInt(entry.IdFolio);
+						}
+						if ( FolioAnexando !== FolioAnterior )
+						{
+						  if ( Entre ) {
+							tubos.push(tuboUnico);	
+						  }
+						  tuboUnico = [ entry.Folio_LIS, entry.IdUnidad+entry.IdLote+entry.IdFolio, entry.Nombre, entry.Abreviatura, entry.Estado ];
+						  
+						  AgregarMVCTubo( entry.Folio_LIS, entry.IdUnidad ,entry.IdLote , entry.IdFolio, entry.Nombre, entry.Estado , 'Enviado' );
+						  
+						  AgregarMVCEstudio( entry.IdUnidad, entry.IdLote ,entry.IdFolio , entry.Abreviatura , 'Enviado');
+						  
+						  Entre = true;
+						} else {
+							tuboUnico[3] = tuboUnico[3] + "~" + entry.Abreviatura
+							AgregarMVCEstudio( entry.IdUnidad, entry.IdLote ,entry.IdFolio , entry.Abreviatura , 'Enviado');
+						}						
+						FolioAnterior = FolioAnexando;
+					   });
+					   if ( Entre ) {
+						tubos.push(tuboUnico);					  
+					   }
+					}).fail(function(error){					  
+						alert("Por el momento no esta disponible el servicio, intente m\u00E1s tarde");					  
+					});
+			return true;
+		}
+
+		var estudios = [ 'INA' ];
+
+		function obtenEstudios(){
+			estudios = [];
+			var estudio = null;
+			$.ajax({
+				  async:false, 
+				  method: "GET",
+				  url: "php/ObtenerEstudios.php?IdUnidad="+unidad[0],
+				  dataType: "json",				  
+				}).done(function(data){					
+					  data.forEach(function(entry){						  
+						  var estudio = [ entry.Nombre, entry.IdEstudio , entry.Abreviatura, entry.Perfil, entry.Licitado, entry.IdUnidad ];
+					      estudios.push(estudio);						  
+					   });						 
+					}).fail(function(error){					  
+						alert("Por el momento no esta disponible el servicio, intente m\u00E1s tarde");					  
+					});					
+			estudios.sort();			
+			ColocaBotonesDeEstudios()
+			return true;
+		}
+		
+		function ColocaBotonesDeEstudios(){
+			var codigo = "";
+			for(var i in estudios){
+				var clase = (estudios[i][2]).replace(/ /g,'');
+				codigo += '<div class="listItem itemCatalogo" estudio="' + clase + '">' + estudios[i][2] + '</div>'
+			}
+			$('#botonesExamenes').html(codigo)
+		}
+		// Modificacion por wojciech
+		function obtenPacienteAleatorio(pos){
+			var pacientes = ["Alfreds Futterkiste","Francisco Chang","Helena Guzmán","Juan Barrera","Giovanni López","Mildred Rojo","Pédro Páramo","Juan Rulfo","Gabriel García","Fabian González",
+			"Juan Villoro","Carlos Monsiváis","Rosario Castellanos","José Emilio Pacheco","José Agustín","Cristina Rivera Garza","Mariano Azuela","Jaime Sabines","Enrique Serna","Carmen Boullosa"
+			];
+			return pacientes[pos];
+		}
+		
+		function obtenEstudiosAleatorios(){
+			var cantidadDeEstudios = Math.floor((Math.random() * 3) + 1);
+			var estudiosPos=""
+			var listaEstudios;
+			var codigo = "";
+			for(var i = 0; i < cantidadDeEstudios; i++){
+				do {
+					var pos = (Math.floor((Math.random() * estudios.length-1))).toString();
+					var v = estudiosPos.includes(pos);
+				}
+				while (v);
+				estudiosPos += pos +"~";
+			}
+			estudiosPos = estudiosPos.slice(0, -1);
+			listaEstudios = estudiosPos.split("~");
+			for(var i in listaEstudios){
+				var x = listaEstudios[i];
+				codigo +=  "<span class='estudio " + (estudios[x][2]).replace(/ /g,'') + "'>" + estudios[x][2].replace(/ /g,'_') + "</span> ";   
+				AgregarMVCEstudio(LoteGlobal.substring(0,2), LoteGlobal.substring(2,5), pad(FolioGlobal,3), estudios[x][2].replace(/ /g,'_'), 'Agregado');
+			}
+			return codigo;
+		}
+		// Termina modificacion
+		
+		function ServicioActualizador(){
+			$('#actualizandoIcono').show();
+			NuevosEstados = [];
+			var estudio = null;
+			$.ajax({
+				  async:false, 
+				  method: "GET",
+				  url: "php/ServicioCambios.php",
+				  dataType: "json",				  
+				}).done(function(data){					
+					  data.forEach(function(entry){						  
+						  var NuevoEstado = [ entry.IdUnidad, entry.IdLote , entry.IdFolio, entry.Estado, entry.EstadoM ];
+					      NuevosEstados.push(NuevoEstado);		
+							$('#actualizandoIcono').hide();
+					   });						 
+					}).fail(function(error){					  
+						$('#actualizandoIcono').hide();
+						alert("Por el momento no esta disponible el servicio, intente m\u00E1s tarde " + error.toString());					  
+					});				
+			<!-- $.ajax({ -->
+				  <!-- async:false,  -->
+				  <!-- method: "GET", -->
+				  <!-- url: "php/ProcesaPaquetes.php", -->
+				  <!-- dataType: "json",				   -->
+				<!-- }).done(function(data){					 -->
+					  <!-- data.forEach(function(entry){						   -->
+						  <!-- var Paquete = entry.Paquete -->
+						  <!-- var Termina = false; -->
+						  <!-- var FolioPaciente = ""; -->
+						  <!-- var NombrePaciente = ""; -->
+						  <!-- var IdentificadorUnidad = ""; -->
+						  <!-- var IdentificadorLote = ""; -->
+						  <!-- var IdentificadorTubo = ""; -->
+						  <!-- //[ entry.pk_astm, entry.Paquete ];					      						   -->
+						  <!-- var Frames = Paquete.split('\n'); -->
+						  <!-- for ( var Fi in Frames ) -->
+							<!-- { -->
+								<!-- var Columnas = Frames.split('|'); -->
+								<!-- switch ( Columnas[0] ) -->
+								<!-- { -->
+									<!-- case "H": -->
+										<!-- Termina = false; -->
+										<!-- break; -->
+									<!-- case "P":										 -->
+										<!-- FolioPaciente = Columnas[2]; -->
+										<!-- NombrePaciente = Columnas[3]; -->
+										<!-- IdentificadorUnidad = FolioPaciente.substring(0,2); -->
+										<!-- IdentificadorLote = FolioPaciente.substring(2,5); -->
+										<!-- IdentificadorTubo = FolioPaciente.substring(5,8); -->
+										<!-- AgregarMVCTubo(FolioPaciente, IdentificadorUnidad, IdentificadorLote, IdentificadorTubo, NombrePaciente, "Recibido por LIS", "Editado"); -->
+										<!-- break; -->
+									<!-- case "O": -->
+										<!-- Estudio = Columnas[1];		 -->
+										<!-- AgregarMVCEstudio(IdentificadorUnidad, IdentificadorLote, IdentificadorTubo, Estudio, "Editado"){										 -->
+										<!-- break; -->
+									<!-- case "L": -->
+										<!-- Termina = true; -->
+										<!-- break; -->
+								<!-- } -->
+								<!-- if ( Termina ) -->
+									<!-- break;								 -->
+							<!-- } -->
+						  <!-- ///H|LIS|EAV -->
+						  <!-- ///P|Folio|FolioMaquilador|Nombre -->
+						  <!-- ///O|Estudio1					   -->
+						  <!-- ///O|Estudio2						   -->
+						  <!-- ///P|Folio|Nombre -->
+						  <!-- ///O|Estudio1 -->
+						  <!-- ///L|N -->
+						  
+					   <!-- })						  -->
+					<!-- }).fail(function(error){					   -->
+						<!-- $('#actualizandoIcono').hide(); -->
+						<!-- alert("Por el momento no esta disponible el servicio, intente m\u00E1s tarde " + error.toString());					   -->
+					<!-- });	 -->
+					
+					// Repintar Pantalla
+					
+			<!-- for(var enumero in listaEstudios){ -->
+				<!-- var ElementoEstado = NuevosEstados[enumero]; -->
+				<!-- for(var mvclote in MVCLotes) -->
+				<!-- { -->
+					<!-- if ( MVCLotes[mvclote][1] == ElementoEstado[enumero][0] && MVCLotes[mvclote][2] == ElementoEstado[enumero][1] ) -->
+					<!-- { -->
+						<!-- MVCLotes[mvclote][5] = ElementoEstado[enumero][3]; -->
+						<!-- for (var mvctubo in MVCLotes[mvclote][4]){						 -->
+							<!-- MVCLotes[mvclote][5] = ElementoEstado[enumero][4]; -->
+							<!-- /*for (var mvcestudio in MVCLotes[mvclote][4][mvctubo][4] ) -->
+							<!-- { -->
+								<!-- if ( MVCLotes[mvclote][4][mvctubo][4][mvcestudio][1] == "Enviado" || MVCLotes[mvclote][4][mvctubo][4][mvcestudio][1] == "EnviadoB" ){ -->
+									<!-- var Basura = "1"; -->
+								<!-- } else { -->
+									<!-- return true; -->
+								<!-- } -->
+							<!-- } -->
+							<!-- } else { -->
+								<!-- return true; -->
+							<!-- }*/								 -->
+							<!-- break; -->
+						<!-- } -->
+						<!-- break; -->
+					<!-- } -->
+				<!-- } -->
+			<!-- } -->
+			return true;
+		}
+		
+		function EnviaPeticionLIS(FolioLocal,FolioMaquilador){
+			// Folio y FolioMaq
+			
+			NuevosEstados = [];
+			var estudio = null;
+			var paquete = "H|LIS|EAV$" +	  
+						  "P|" + FolioLocal  + "|" + FolioMaquilador + "$" +
+						  "L|N" ;
+						  console.log(paquete);
+			$.ajax({
+				  async:false, 
+				  method: "get",
+				  url: "php/solicitandoLis.php?FolioLIS=" + FolioLocal + "&FolioMaq=" + FolioMaquilador,
+				  dataType: "json",				  
+				}).done(function(data){					
+					  <!-- data.forEach(function(entry){						   -->
+						  <!-- var NuevoEstado = [ entry.IdUnidad, entry.IdLote , entry.IdFolio, entry.Estado, entry.EstadoM ]; -->
+					      <!-- NuevosEstados.push(NuevoEstado);		 -->
+							<!-- $('#actualizandoIcono').hide(); -->
+					   <!-- });						  -->
+					   console.log(paquete);
+					   <!-- alert("222"); -->
+					}).fail(function(error){					  
+						$('#actualizandoIcono').hide();
+						alert("Por el momento no esta disponible el servicio, intente m\u00E1s tarde " + error.toString());					  
+					});
+					var peticion = [FolioLocal,FolioMaquilador, "Esperando respuesta"]
+					if(typeof(peticionesLIS) == "undefined"){
+						peticionesLIS =[];
+					}
+					peticionesLIS.push(peticion);
+
+		}			
+			
+			function colocarEstudios(){
+				var codigo = "";
+				var data;
+								
+				$.ajax({
+				  async:false, 
+				  method: "get",
+				  url: "php/TraerAstm.php",
+				  dataType: "json",			
+				}).done(function(data){					
+					  data.forEach(function(entry){
+						  
+
+						var Paquete = entry.paquete
+						var Termina = false;
+						var FolioPaciente = "";
+						var NombrePaciente = "";
+						var IdentificadorUnidad = "";
+						var IdentificadorLote = "";
+						var IdentificadorTubo = "";
+						var Estudio = [];
+						//[ entry.pk_astm, entry.Paquete ];					      						  
+						var Frames = Paquete.split('\n');
+						for ( var Fi in Frames )
+						{
+							var Columnas = Frames[Fi].split('|');
+							switch ( Columnas[0] )
+							{
+								case "H":
+									Termina = false;
+									break;
+								case "P":										
+									FolioPaciente = Columnas[2];
+									NombrePaciente = Columnas[3];//3 - 1
+									IdentificadorUnidad = FolioPaciente.substring(0,2);
+									IdentificadorLote = FolioPaciente.substring(2,5);
+									IdentificadorTubo = FolioPaciente.substring(5,8);
+									FolioPaciente = Columnas[1];
+									AgregarMVCTubo(FolioPaciente, IdentificadorUnidad, IdentificadorLote, IdentificadorTubo, NombrePaciente, "Recibido por LIS", "Editado");
+									break;
+									case "O":
+									Estudio.push(Columnas[1]);		
+									AgregarMVCEstudio(IdentificadorUnidad, IdentificadorLote, IdentificadorTubo, Estudio, "Editado")										
+									break;
+								case "L":
+									Termina = true;
+									break;
+							}
+							
+							if ( Termina )
+							break;								
+						}
+						codigo += "<tr>";
+							codigo += "<td class='sorting_1'>" + IdentificadorUnidad + IdentificadorLote + IdentificadorTubo + "</td>";
+							codigo += "			<td>" + FolioPaciente + "</td>";
+							codigo += "			<td>" + NombrePaciente + "</td>";
+							<!-- codigo += "			<td>" + Estudio + "</td>";	 -->
+							codigo += "			<td>";
+							for(var i in Estudio){
+								codigo += "<span class='estudio " + Estudio[i] + "'>" + Estudio[i] + "</span> ";
+							}
+							codigo += "			</td>";
+							
+							codigo += "			<td>" + "Solicitando a LIS" + "</td>";
+							codigo += "</tr>";
+						varNombre = NombrePaciente;
+						<!-- $('#tubosDeLote').prepend(codigo); -->
+						  
+					   })						 
+					}).fail(function(error){					  
+						alert("•Por el momento no esta disponible el servicio, intente m\u00E1s tarde");					  
+					});
+			
+					<!-- Funcion refresh(); -->
+					refrescarTubos();
+					return codigo;
+				
+				
+			}
+			
+			
+			function AjaxMaquilador(idUnidad, idLote){
+			
+				$.ajax({
+				  async:false, 
+				  method: "GET",
+				  url: "php/EnviarMaquilador.php?IdUnidad=" + idUnidad + "&IdLote=" + idLote,
+				  dataType: "json"
+				}).done(function(data){					
+					  if ( data.toLowerCase() == "correcto")
+							alert("Proceso finalizado");
+						console.log(data);
+					}).fail(function(error){					  
+						alert("Por el momento no esta disponible el servicio, intente m\u00E1s tarde");					  
+					});	
+			}
+			
+			function refrescarTubos(){
+				if(typeof peticionesLIS === 'undefined')
+					return true;
+					//mvcIdUnidad, mvcIdLote, mvcIdFolio, mvcAbreviatura ){
+					//[FolioLocal,FolioMaquilador,"Solicitud Pendiente"]
+				var codigoEstudios = "";
+				for(var peticion in peticionesLIS){
+				
+					var mvcIdUnidad = peticionesLIS[peticion][1].substring(0,2);
+					var mvcIdLote = peticionesLIS[peticion][1].substring(2,5);
+					var mvcIdFolio = peticionesLIS[peticion][1].substring(5,8);
+					var folioLis = peticionesLIS[peticion][0];
+					
+					for(var mvclote in MVCLotes)
+					{
+						if ( MVCLotes[mvclote][1] == mvcIdUnidad && MVCLotes[mvclote][2] == mvcIdLote )
+						{
+							for (var mvctubo in MVCLotes[mvclote][4]){
+								if ( MVCLotes[mvclote][4][mvctubo][0] == folioLis )/*0 2*/
+								{
+									if(MVCLotes[mvclote][4][mvctubo][3] == "Recibido por LIS"){
+										var folioMaquilador = peticionesLIS[peticion][1];
+										var botonRefresh = "<i class='material-icons dp48 btnRefreshTubo' folioLis='" + folioLis + "' folioMaquilador='" +folioMaquilador + "' style='font-size: 30px;position: absolute;margin: -5px 5px;'>refresh</i>";
+										var nombre = MVCLotes[mvclote][4][mvctubo][2];
+										$("#tubosDeLote tbody tr:containsi('" + folioLis +"')").find("td:nth-child(2)").html(peticionesLIS[peticion][1]);//folio maquilador
+										if(nombre !== "")
+											$("#tubosDeLote tbody tr:containsi('" + folioLis +"')").find("td:nth-child(3)").html(nombre);
+										$("#tubosDeLote tbody tr:containsi('" + folioLis +"')").find("td:nth-child(5)").html("Recibido por LIS " + botonRefresh);
+										peticionesLIS[peticion][2] = "Atendido";
+									}
+												<!-- peticionesLIS.splice(peticion,1); -->
+								
+								
+									for (var mvcestudio in MVCLotes[mvclote][4][mvctubo][4] )
+									{
+										<!-- if(peticionesLIS[peticion][2] === "Esperando respuesta"){ -->
+										if(MVCLotes[mvclote][4][mvctubo][4][mvcestudio][0].constructor == Array)
+											for(var estudios in MVCLotes[mvclote][4][mvctubo][4][mvcestudio][0]){
+												var estud = MVCLotes[mvclote][4][mvctubo][4][mvcestudio][0][estudios];
+												<!-- var botonRefresh = "<i class='material-icons dp48 btnRefreshTubo' folioLis='" + folioLis + "' folioMaquilador='" + peticionesLIS[peticion][1] + "' style='font-size: 30px;position: absolute;margin: -5px 5px;'>refresh</i>"; -->
+												codigoEstudios += "<span class='estudio " + estud + "'>" + estud + "</span> ";
+											}
+										else {
+											codigoEstudios += "<span class='estudio " + MVCLotes[mvclote][4][mvctubo][4][mvcestudio][0] + "'>" + MVCLotes[mvclote][4][mvctubo][4][mvcestudio][0] + "</span> ";
+										}
+												<!-- var nombre = MVCLotes[mvclote][4][mvctubo][2]; -->
+												<!-- $("#tubosDeLote tbody tr:containsi('" + folioLis +"')").find("td:nth-child(3)").html(nombre); -->
+												$("#tubosDeLote tbody tr:containsi('" + folioLis +"')").find("td:nth-child(4)").html(codigoEstudios);
+												<!-- $("#tubosDeLote tbody tr:containsi('" + folioLis +"')").find("td:nth-child(5)").html("Recibido por LIS " + botonRefresh); -->
+												<!-- peticionesLIS[peticion][2] = "Atendido"; -->
+												peticionesLIS.splice(peticion,1);
+										return true;
+										<!-- } -->
+									}							
+									//<!-- return true; -->
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			
+	</script>
+				
+	<style>
+	  table {
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    .header-row > td {
+        width: 100px;
+    }
+
+    td.rhead {
+        width: 300px
+    }
+	
+	</style>
+		
+	</body>
+</html>

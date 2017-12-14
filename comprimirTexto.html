@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Compresor de textos para Pasteur EAV</title>
+		<link rel="stylesheet" href="CSS/estilos.css">
+		<meta charset="utf-8">
+	</head>
+	<body>
+		
+		<label for="entrada" style="">Entrada</label>
+		<textarea rows="4" cols="50" id="entrada" style="height:200px"></textarea>
+		
+		<label for="salida" style="">Salida</label>
+		<textarea rows="4" cols="50" id="salida" style="height:200px"></textarea>
+		
+		<br />
+		<div id="comprimir" class="btn">Comprimir</div>
+		<div id="descomprimir" class="btn">Descomprimir</div>
+		
+		<script src="Scripts/jquery-1.7.1.min.js"></script>
+		<script src="Scripts/CompresorDeTexto.js"></script>
+		
+		<script>
+			$(document).ready(function(){
+
+				$('html').on('click','#comprimir', function(){
+					$('#salida').val(compresionDeTexto($('#entrada').val(),1))
+				});
+				
+				$('html').on('click','#descomprimir', function(){
+					$('#salida').val(compresionDeTexto($('#entrada').val(),2))
+				});
+			
+			});
+		</script>
+		
+	</body>
+</html>

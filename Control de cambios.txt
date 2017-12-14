@@ -1,0 +1,4 @@
+Panel de órden múltiple
+Ajustes visuales en botones
+Teclado virtual
+Sección de configuración en ventana completa
